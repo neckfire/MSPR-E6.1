@@ -15,5 +15,5 @@ urlpatterns = [
     path('plante/ajouter-conseil/<int:pk>/', views.ajouter_conseil, name='ajouter_conseil'),
     path('accounts/login/', LoginView.as_view(template_name='plantes/login.html'), name='login'),
     path('accounts/register/', LoginView.as_view(template_name='plantes/register.html'), name='register'),
-    path('accounts/logout/', LogoutView.as_view(), name='logout'),
+    path('accounts/logout/', LogoutView.as_view(template_name='plantes/logout.html'), name='logout'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

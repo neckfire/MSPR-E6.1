@@ -19,4 +19,4 @@ EXPOSE 8000
 
 
 # Définir la commande à exécuter pour démarrer l'application
-CMD ["python", "a_rosa_je/manage.py", "runserver", "0.0.0.0:8000"]
+CMD ["python", "a_rosa_je/manage.py", "runserver", "localhost:8000"]
