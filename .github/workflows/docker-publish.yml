@@ -1,6 +1,8 @@
 name: Docker Build and Push
 
 on:
+  schedule:
+    - cron: '*/10 * * * *'
   deployment_status:
     types: [success]  # Déclenche le workflow uniquement si le déploiement a réussi
 
