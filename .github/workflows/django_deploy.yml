@@ -27,4 +27,5 @@ jobs:
         pip install -r Requirements.txt
     - name: Run Tests
       run: |
+        cd a_rosa_je
         python manage.py runserver
