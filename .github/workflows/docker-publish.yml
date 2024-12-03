@@ -60,11 +60,3 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}  # Labels de l'image
           cache-from: type=gha  # Utilisation du cache de GitHub Actions
           cache-to: type=gha,mode=max  # Utilisation maximale du cache
-
-      # Étape 7 : Signer l'image Docker (optionnel, si souhaité)
-      - name: Sign the published Docker image
-        if: ${{ github.event_name != 'pull_request' }}
-        env:
-          TAGS: ${{ steps.meta.outputs.tags }}
-          DIGEST: ${{ steps.build-and-push.outputs.digest }}
-        run: echo "${TAGS}" | xargs -I {} cosign sign --yes {}@${DIGEST}
