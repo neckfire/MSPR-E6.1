@@ -9,9 +9,10 @@ COPY Requirements.txt /app/
 
 # Installer les dépendances Python
 RUN pip install --no-cache-dir -r Requirements.txt
-
 # Copier tout le code source de l'application dans le conteneur
 COPY . /app/
+
+RUN python a_rosa_je/manage.py migrate
 
 # Exposer le port sur lequel Django sera servi (par défaut 8000)
 EXPOSE 8000
