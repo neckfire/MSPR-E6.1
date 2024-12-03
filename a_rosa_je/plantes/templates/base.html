@@ -1,0 +1,69 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A'rosa-je</title>
+    <link rel="stylesheet" href="https://www.leaderplant.com/static/version1729600356/frontend/Dbm/leaderplant/fr_FR/proto/app/assets/styles/local/styles.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header class="o-header">
+        <div class="c-header">
+            <a href="#" class="c-header__logo">
+                <img src="{% static 'logo.png' %}" alt="A'rosa-je">
+            </a>
+            <nav class="o-nav">
+                <ul class="c-nav__level0">
+                    <li><a href="/">Accueil</a></li>
+                    <li><a href="/plante/ajouter-conseil/">Ajouter un conseil</a></li>
+                    <li><a href="#">Contact</a></li>
+                </ul>
+            </nav>
+            <div class="c-nav__icon">
+                <span></span>
+            </div>
+        </div>
+    </header>
+
+    <main class="c-main">
+        {% block content %}
+        {% endblock %}
+    </main>
+
+    <footer class="o-footer">
+        
+        <div class="c-footer__social c-row">
+            <div class="c-col">
+                <h3 class="c-title--medium">Rejoignez-nous sur les réseaux sociaux</h3>
+                <p>Suivez-nous pour rester informé de nos dernières actualités.</p>
+
+            </div>
+            <div class="c-col">
+                <h3 class="c-title--medium">Inscription à la newsletter</h3>
+                <div class="c-input__search--newsletter">
+                    <input type="email" placeholder="Entrez votre email">
+                    <button type="submit"><i class="icon-envlop"></i></button>
+                </div>
+            </div>
+            <div class="c-col">
+                <h3 class="c-title--medium">Contactez-nous</h3>
+                <p>Tél. : 01 23 45 67 89</p>
+                <p>Email : contact@a-rosa-je.com</p>
+            </div>
+        </div>
+        <div class="c-footer__seo c-row">
+            <div class="c-col c-l__6">
+                <p class="c-copyright">&copy; 2024 A'rosa-je. Tous droits réservés.</p>
+                <p>Mentions légales - Politique de confidentialité</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>

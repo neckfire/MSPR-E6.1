@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <h1>Mes plantes à faire garder</h1>
+  <ul>
+    {% for plante in plantes %}
+      <li>
+        <a href="{% url 'detail_plante' pk=plante.pk %}">{{ plante.nom }}</a>
+        <p>{{ plante.description }}</p>
+        <p>Localisation : {{ plante.localisation }}</p>
+      </li>
+    {% empty %}
+      <li>Vous n'avez pas encore de plantes à faire garder.</li>
+    {% endfor %}
+  </ul>
+  <a href="{% url 'ajouter_plante' %}">Ajouter une plante</a>
+{% endblock %}
