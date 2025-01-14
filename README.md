@@ -1,2 +1,2 @@
 # MSPR
-Projet pour Epsi
+Application mobile A-Rosa'Je
