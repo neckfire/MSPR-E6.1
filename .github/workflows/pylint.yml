@@ -1,6 +1,6 @@
 name: Django Lint
 
-on: [push, pull_request] 
+on: [push, pull_request]
 
 jobs:
   lint:
@@ -25,12 +25,7 @@ jobs:
         pip install djangorestframework
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
     
-    - name: Generate pylintrc
-      run: |
-        pylint --generate-rcfile > .pylintrc
-        echo "load-plugins=pylint_django" >> .pylintrc
-        echo "django-settings-module=plantcare_backend.settings" >> .pylintrc
-    
     - name: Analysing the code with pylint
       run: |
-        pylint --load-plugins=pylint_django --django-settings-module=plantcare_backend.settings $(git ls-files '*.py') || exit $(($? & 35))
+        cd a_rosa_je
+        pylint --rcfile=.pylintrc $(git ls-files '*.py') || exit $(($? & 35))
