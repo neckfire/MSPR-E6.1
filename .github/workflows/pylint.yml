@@ -7,7 +7,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: ["3.10"]
+        python-version: ["3.11"]
     steps:
     - uses: actions/checkout@v4
     
@@ -27,5 +27,8 @@ jobs:
     
     - name: Analysing the code with pylint
       run: |
-        cd a_rosa_je
-        pylint --rcfile=.pylintrc $(git ls-files '*.py') || exit $(($? & 35))
+        pylint --load-plugins=pylint_django \
+               --django-settings-module=a_rosa_je.settings \
+               --disable=C0114,C0115,C0116,C0301,C0304,C0103,R0901,R0903,W0611,W0401,W0614,E5142,C0411 \
+               --max-line-length=120 \
+               $(git ls-files '*.py') || exit $(($? & 35))
