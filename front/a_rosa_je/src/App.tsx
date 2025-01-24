@@ -4,6 +4,7 @@ import Sidebar from './component/generic/sidebar';
 import ProductManagementPage from './page/stock.tsx';
 import theme from './theme';
 import AnotherPage from "./page/another";
+import Header from "./component/generic/header.tsx";
 
 function App() {
     return (
@@ -11,6 +12,7 @@ function App() {
             <Router>
 
                 <Sidebar />
+                <Header/>
                 <div style={{ width: '100%' }}>
                     <Routes>
                         <Route path="/stock" element={<ProductManagementPage />} />

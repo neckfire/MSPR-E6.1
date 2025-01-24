@@ -2,11 +2,10 @@ import {
     Box,
     VStack,
     Button,
-    Icon,
+    // Icon,
     Text,
     Flex,
 } from '@chakra-ui/react';
-import { FaChartLine, FaBoxOpen, FaTools } from 'react-icons/fa';
 
 function Sidebar() {
     return (
@@ -14,7 +13,7 @@ function Sidebar() {
             as="nav"
             w={{ base: "25%", md: "20%", lg: "15%" }}
             h="100vh"
-            bg="black"
+            bg="#124660"
             color="white"
             p="5"
             position="fixed"
@@ -27,28 +26,27 @@ function Sidebar() {
                 flexDirection="column"
             >
                 <Text fontSize="4xl" >
-                    Menu
+                    icone a-rosa-je
                 </Text>
             </Flex>
 
-            <VStack spacing="8" align="stretch" >
+            <VStack spacing="4" align="stretch" >
                 <Button
                     padding={8}
                     as="a"
                     href="/another"
                     variant="ghost"
                     color={"white"}
-                    leftIcon={<Icon as={FaChartLine} />}
+                    // leftIcon={<Icon as={} />}
                     justifyContent="flex-start"
                     fontSize="2xl"
                     w="100%"
                     _hover={{
-                        bg: "white",
+                        bg: "#127db2cc",
                         transform: "scale(1.05)",
-                        color:"black"
                     }}
                 >
-                    Dashboard
+                    Home
                 </Button>
 
                 <Button
@@ -57,17 +55,16 @@ function Sidebar() {
                     href="/stock"
                     variant="ghost"
                     color={"white"}
-                    leftIcon={<Icon as={FaBoxOpen} />}
+                    // leftIcon={<Icon as={FaBoxOpen} />}
                     justifyContent="flex-start"
                     w="100%"
                     fontSize="2xl"
                     _hover={{
-                        bg: "white",
-                        color: "black",
+                        bg: "#127db2cc",
                         transform: "scale(1.05)",
                     }}
                 >
-                    Stock
+                    Plantsitting
                 </Button>
 
                 <Button
@@ -76,17 +73,16 @@ function Sidebar() {
                     href="#services"
                     variant="ghost"
                     color=  "white"
-                    leftIcon={<Icon as={FaTools} />}
+                    // leftIcon={<Icon as={FaTools} />}
                     justifyContent="flex-start"
                     w="100%"
                     fontSize="2xl"
                     _hover={{
-                        bg: "white",
-                        color:"black",
+                        bg: "#127db2cc",
                         transform: "scale(1.05)",
                     }}
                 >
-                    Services
+                    Settings
                 </Button>
             </VStack>
         </Box>
