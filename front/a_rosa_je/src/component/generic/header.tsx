@@ -1,5 +1,8 @@
-import {Avatar, Box, Button, Icon, Input, Stack} from "@chakra-ui/react";
+import {Box, Flex, Input, InputGroup, InputRightElement, Stack} from "@chakra-ui/react";
 import {AddIcon, Search2Icon} from "@chakra-ui/icons";
+import GenericButton from "./genericButton.tsx";
+import AvatarMenu from "./avatar.tsx";
+import img from "../../assets/img.png"
 
 
 
@@ -7,6 +10,7 @@ function Header() {
 
     return(
             <Box
+                h="10%"
                 ml='15%'
                 w='85%'
                 bg='#124660'
@@ -16,21 +20,21 @@ function Header() {
                 display='flex'
             >
                 <Stack w='25%' direction='row' spacing={4} align='center' >
-                    <Input placeholder="Search" size="lg" variant='flushed'/>
-                    <Icon as={Search2Icon}/>
-
-                    <Stack>
-                        <Button leftIcon={<AddIcon/>} bg='#1B9476' color='white'>
-                            Ajouter
-                        </Button>
-                    </Stack>
+                    <InputGroup>
+                    <Input placeholder="Rechercher..." size="lg" variant='outline' />
+                        <InputRightElement  alignItems='center' >
+                            <Search2Icon fontSize={20}/>
+                        </InputRightElement>
+                    </InputGroup>
                 </Stack>
-                <Stack marginLeft='auto' align='center' cursor='pointer'>
-                    <Avatar name="lucas laliche"/>
-                </Stack>
+                <Flex ml={'auto'} gap={5} align='center'>
+                    <GenericButton
+                        label={'Ajouter'}
+                        leftIcon={<AddIcon/>}
+                    />
+                    <AvatarMenu avatarUrl={img}/>
 
-
-
+                </Flex>
             </Box>
         )
 }
