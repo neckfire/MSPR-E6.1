@@ -7,7 +7,6 @@ import img from "../../assets/img.png"
 
 
 function Header() {
-
     return(
             <Box
                 h="10%"
