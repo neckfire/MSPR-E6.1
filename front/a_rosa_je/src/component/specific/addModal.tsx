@@ -1,19 +1,19 @@
 import {useDisclosure } from "@chakra-ui/react";
 import GenericModal from "../generic/genericModal.tsx";
 
-const addModal = () => {
+const AddModal = () => {
     const { isOpen, onClose } = useDisclosure();
 
     return (
             <GenericModal
                 isOpen={isOpen}
                 onClose={onClose}
-                title="Ma Modal Générique"
+                title="Ajouter un post"
                 size="lg"
             >
-AAAAAAAAAAA
+jjjjjjjj
             </GenericModal>
     );
 };
 
-export default addModal;
+export default AddModal;
