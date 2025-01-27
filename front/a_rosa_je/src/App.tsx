@@ -10,10 +10,9 @@ function App() {
     return (
         <ChakraProvider theme={theme}>
             <Router>
-
                 <Sidebar />
                 <Header/>
-                <div style={{ width: '100%' }}>
+                <div style={{ width: '80%'  ,marginLeft: '10%'}}>
                     <Routes>
                         <Route path="/stock" element={<ProductManagementPage />} />
                         <Route path="/another" element={<AnotherPage/>} />

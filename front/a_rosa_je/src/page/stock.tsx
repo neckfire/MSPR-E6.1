@@ -1,5 +1,13 @@
+import Card from "../component/generic/Card.tsx";
+import {Box} from "@chakra-ui/react";
+
 function ProductManagement() {
-    return <h1>Bienvenue sur une autre page !</h1>;
+    return (
+        <Box>
+            <Card/>
+        </Box>
+
+    )
 }
 
 export default ProductManagement;
