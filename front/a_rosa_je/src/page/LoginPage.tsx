@@ -1,17 +1,36 @@
-import {Box, Button, Input, VStack, Heading, InputGroup, InputRightElement, IconButton} from "@chakra-ui/react";
-import { useNavigate } from "react-router-dom";
-import {useState} from "react";
+import {
+    Box,
+    Button,
+    Input,
+    VStack,
+    Heading,
+    InputGroup,
+    InputRightElement,
+    IconButton,
+    Text,
+    Flex,
+} from "@chakra-ui/react";
+import { useState } from "react";
+import {useNavigate} from "react-router-dom";
 
 export default function LoginPage() {
+    const [isLoginMode, setIsLoginMode] = useState(true); // État pour déterminer la vue affichée
+    const [showPassword, setShowPassword] = useState(false);
     const navigate = useNavigate();
 
-    const handleLogin = () => {
-
-        navigate("/stock");
+    const handleToggleMode = () => {
+        setIsLoginMode((prevMode) => !prevMode);
     };
 
-    const [show, setShow] = useState(false)
-    const handleClick = () => setShow(!show)
+    const handlePasswordVisibility = () => {
+        setShowPassword(!showPassword);
+    };
+
+
+
+    const handleLogin = () => {
+        navigate("/stock");
+    }
 
     return (
         <Box
@@ -21,48 +40,165 @@ export default function LoginPage() {
             height="100vh"
             bgImage="url(/src/assets/LoginBg.png)"
             p={2}
+            overflow="hidden"
         >
             <Box
-                backdropFilter="blur(10px)"
-                p={8}
+                width="800px"
+                height="500px"
+                bg="rgba(255, 255, 255, 0.1)"
+                backdropFilter={"blur(10px)"}
+                borderRadius="lg"
                 boxShadow="lg"
-                borderRadius="md"
-                width="30%"
-                textAlign="center"
+                overflow="hidden"
+                position="relative"
             >
-                <Heading mb={6} color={'white'}>Connexion</Heading>
-                <VStack spacing={4}>
-                    <Input placeholder="Identifiant"  variant={'flushed'} colorScheme={'green'} color={'white'} />
-                    <InputGroup size='md'>
-                        <Input
-                            pr='4.5rem'
-                            type={show ? 'text' : 'password'}
-                            placeholder='Enter password'
-                            variant={'flushed'}
-                            color={'white'}
-                        />
-                        <InputRightElement width='4.5rem'>
-                            <IconButton
-                                colorScheme={'whiteAlpha'}
-                                h='1.75rem'
-                                size='sm'
-                                onClick={handleClick}
-                                aria-label={'Login'}
-                                variant={'ghost'}
-                                _hover={{ bgColor: "none" }}
-                                icon={<i
-                                    className={show ? 'fa-regular fa-eye-slash' : 'fa-regular fa-eye'} style={{
-                                        color: 'white'
-                                }}
-                                />}
+                <Flex
+                    width="200%"
+                    height="100%"
+                    transform={isLoginMode ? "translateX(0)" : "translateX(-50%)"}
+                    transition="transform 0.5s ease-in-out"
+                >
+                    {/* SECTION CONNEXION */}
+                    <Box
+                        width="50%"
+                        bg="rgba(0, 0, 0, 0.6)"
+                        display="flex"
+                        flexDirection="column"
+                        alignItems="center"
+                        justifyContent="center"
+                        p={8}
+                    >
+                        <Heading mb={6} color="white">
+                            Connexion
+                        </Heading>
+                        <VStack spacing={8} w="80%">
+                            <Input
+                                placeholder="Identifiant"
+                                variant="flushed"
+                                colorScheme="green"
+                                color="white"
+                                fontSize="1.5rem"
                             />
+                            <InputGroup size="md">
+                                <Input
+                                    pr="4.5rem"
+                                    type={showPassword ? "text" : "password"}
+                                    placeholder="Mot de passe"
+                                    variant="flushed"
+                                    color="white"
+                                    fontSize="1.5rem"
+                                />
+                                <InputRightElement width="4.5rem">
+                                    <IconButton
+                                        colorScheme="whiteAlpha"
+                                        h="1.75rem"
+                                        size="sm"
+                                        onClick={handlePasswordVisibility}
+                                        aria-label="Afficher/masquer mot de passe"
+                                        variant="ghost"
+                                        _hover={{ bgColor: "none" }}
+                                        icon={
+                                            <i
+                                                className={
+                                                    showPassword
+                                                        ? "fa-regular fa-eye-slash"
+                                                        : "fa-regular fa-eye"
+                                                }
+                                                style={{
+                                                    color: "white",
+                                                }}
+                                            />
+                                        }
+                                    />
+                                </InputRightElement>
+                            </InputGroup>
+                            <Button colorScheme="green" onClick={handleLogin}>Se connecter</Button>
+                            <Text
+                                color="white"
+                                mt={4}
+                                cursor="pointer"
+                                _hover={{ textDecoration: "underline" }}
+                                onClick={handleToggleMode}
+                            >
+                                Pas encore de compte ? Créer un compte
+                            </Text>
+                        </VStack>
+                    </Box>
 
-                        </InputRightElement>
-                    </InputGroup>
-                    <Button colorScheme="green" onClick={handleLogin}>
-                        Se connecter
-                    </Button>
-                </VStack>
+                    {/* SECTION CREATION DE COMPTE */}
+                    <Box
+                        width="50%"
+                        bg="rgba(0, 0, 0, 0.6)"
+                        display="flex"
+                        flexDirection="column"
+                        alignItems="center"
+                        justifyContent="center"
+                        p={8}
+                    >
+                        <Heading mb={6} color="white">
+                            Créer un compte
+                        </Heading>
+                        <VStack spacing={8  } w="80%">
+                            <Input
+                                placeholder="Identifiant"
+                                variant="flushed"
+                                colorScheme="green"
+                                color="white"
+                                fontSize="1.5rem"
+                            />
+                            <Input
+                                placeholder="Email"
+                                variant="flushed"
+                                colorScheme="green"
+                                color="white"
+                                fontSize="1.5rem"
+                            />
+                            <InputGroup size="md">
+                                <Input
+                                    pr="4.5rem"
+                                    type={showPassword ? "text" : "password"}
+                                    placeholder="Mot de passe"
+                                    variant="flushed"
+                                    color="white"
+                                    fontSize="1.5rem"
+                                />
+                                <InputRightElement width="4.5rem">
+                                    <IconButton
+                                        colorScheme="whiteAlpha"
+                                        h="1.75rem"
+                                        size="sm"
+                                        onClick={handlePasswordVisibility}
+                                        aria-label="Afficher/masquer mot de passe"
+                                        variant="ghost"
+                                        _hover={{ bgColor: "none" }}
+                                        icon={
+                                            <i
+                                                className={
+                                                    showPassword
+                                                        ? "fa-regular fa-eye-slash"
+                                                        : "fa-regular fa-eye"
+                                                }
+                                                style={{
+                                                    color: "white",
+                                                }}
+                                            />
+                                        }
+                                    />
+                                </InputRightElement>
+                            </InputGroup>
+                            <Button colorScheme="green" onClick={handleLogin} >Créer un compte</Button>
+                            <Text
+                                color="white"
+                                mt={4}
+                                cursor="pointer"
+                                _hover={{ textDecoration: "underline" }}
+                                onClick={handleToggleMode}
+                            >
+                                Déjà un compte ? Se connecter
+                            </Text>
+                        </VStack>
+                    </Box>
+                </Flex>
             </Box>
         </Box>
     );

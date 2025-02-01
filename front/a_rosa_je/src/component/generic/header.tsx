@@ -6,7 +6,6 @@ import img from "../../assets/img.png"
 import AddModal from "../specific/addModal.tsx";
 
 
-
 function Header() {
     const { isOpen, onOpen, onClose } = useDisclosure();
 

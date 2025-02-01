@@ -28,6 +28,7 @@ const Card = () => {
                     icon={<i className="fa-regular fa-comment" style={{ fontSize: "1.5rem", color: "black" }}/>}
                     size="lg"
                     ml={'auto'}
+                    colorScheme={'green'}
                 />
             </Flex>
         </Box>

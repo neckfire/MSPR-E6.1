@@ -6,32 +6,44 @@ import {
     ModalFooter,
     ModalBody,
     ModalProps,
+    Button
 } from "@chakra-ui/react";
-import React, { ReactNode } from "react";
+import { FC, ReactNode } from "react";
 
 interface GenericModalProps extends Omit<ModalProps, "children"> {
     isOpen: boolean;
     onClose: () => void;
     title?: string;
-    size?: "xs" | "sm" | "md" | "lg" | "xl" | "full"; // Chakra UI modal sizes
+    size?: "xs" | "sm" | "md" | "lg" | "xl" | "full";
     children: ReactNode;
+    onCancel?: () => void;
+    onConfirm?: () => void;
 }
 
-const GenericModal: React.FC<GenericModalProps> = ({
-                                                       isOpen,
-                                                       onClose,
-                                                       title = "Titre de la modal",
-                                                       size = "md",
-                                                       children,
-                                                       ...modalProps
-                                                   }) => {
+const GenericModal: FC<GenericModalProps> = ({
+                                                 isOpen,
+                                                 onClose,
+                                                 title = "Titre de la modal",
+                                                 size = "md",
+                                                 children,
+                                                 onCancel,
+                                                 onConfirm,
+                                                 ...modalProps
+                                             }) => {
     return (
         <Modal isOpen={isOpen} onClose={onClose} size={size} {...modalProps}>
             <ModalOverlay />
             <ModalContent>
                 <ModalHeader>{title}</ModalHeader>
                 <ModalBody>{children}</ModalBody>
-                <ModalFooter></ModalFooter>
+                <ModalFooter>
+                    <Button variant="ghost" onClick={onCancel || onClose}>
+                        Annuler
+                    </Button>
+                    <Button colorScheme="green" ml={3} onClick={onConfirm}>
+                        Valider
+                    </Button>
+                </ModalFooter>
             </ModalContent>
         </Modal>
     );

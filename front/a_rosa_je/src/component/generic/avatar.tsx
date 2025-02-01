@@ -8,6 +8,7 @@ import {
     Icon,
 } from "@chakra-ui/react";
 import { FiSettings, FiLogOut } from "react-icons/fi";
+import {useNavigate} from "react-router-dom";
 
 interface AvatarMenuProps {
     onSettingsClick?: () => void;
@@ -17,11 +18,18 @@ interface AvatarMenuProps {
 }
 
 const AvatarMenu: React.FC<AvatarMenuProps> = ({
-                                                   onSettingsClick,
-                                                   onLogoutClick,
                                                    avatarUrl,
                                                    userName = "Utilisateur",
                                                }) => {
+    const navigate = useNavigate();
+
+    const handleLogoutClick = () => {
+        navigate("/login");
+    }
+
+    const handleSettingClick = () => {
+        navigate("/setting");
+    }
     return (
         <Menu>
             <MenuButton>
@@ -33,11 +41,11 @@ const AvatarMenu: React.FC<AvatarMenuProps> = ({
                 />
             </MenuButton>
             <MenuList color={'black'}>
-                <MenuItem icon={<Icon as={FiSettings} />} onClick={onSettingsClick} fontWeight={'bold'}>
+                <MenuItem icon={<Icon as={FiSettings} />} onClick={handleSettingClick} fontWeight={'bold'}>
                     Paramètres
                 </MenuItem>
                 <MenuDivider />
-                <MenuItem icon={<Icon as={FiLogOut} />} onClick={onLogoutClick} fontWeight={'bold'}>
+                <MenuItem icon={<Icon as={FiLogOut} />} onClick={handleLogoutClick} fontWeight={'bold'}>
                     Se déconnecter
                 </MenuItem>
             </MenuList>

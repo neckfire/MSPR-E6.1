@@ -72,7 +72,7 @@ function Sidebar() {
                 <Button
                     as="a"
                     padding={8}
-                    href="#services"
+                    href="/setting"
                     variant="ghost"
                     color=  "white"
                     // leftIcon={<Icon as={FaTools} />}

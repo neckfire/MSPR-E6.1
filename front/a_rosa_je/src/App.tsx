@@ -7,6 +7,7 @@ import AnotherPage from "./page/another";
 import Header from "./component/generic/header.tsx";
 import LoginPage from "./page/LoginPage";
 import {ReactNode} from "react";
+import SettingPage from "./page/settingPage.tsx";
 
 function Layout({ children }: { children: ReactNode }) {
     const location = useLocation();
@@ -38,6 +39,7 @@ function App() {
                         <Route path="/login" element={<LoginPage />} />
                         <Route path="/stock" element={<ProductManagementPage />} />
                         <Route path="/another" element={<AnotherPage />} />
+                        <Route path="/setting" element={<SettingPage />} />
                     </Routes>
                 </Layout>
             </Router>
