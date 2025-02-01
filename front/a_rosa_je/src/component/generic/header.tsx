@@ -12,6 +12,7 @@ function Header() {
 
     return(
         <Box
+            top="0"
             h="10%"
             ml='15%'
             w='85%'
@@ -20,6 +21,7 @@ function Header() {
             p={4}
             color='white'
             display='flex'
+            zIndex={1000}
         >
             <Stack w='25%' direction='row' spacing={4} align='center'>
                 <InputGroup>

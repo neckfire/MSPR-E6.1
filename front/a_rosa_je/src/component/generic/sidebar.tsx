@@ -10,14 +10,16 @@ import {
 function Sidebar() {
     return (
         <Box
+            position="fixed"
+            left="0"
+            top="0"
             as="nav"
             w={{ base: "25%", md: "20%", lg: "15%" }}
             h="100vh"
             bg="#124660"
             color="white"
             p="5"
-            position="fixed"
-            boxShadow="md"
+            zIndex={1000}
         >
             <Flex
                 mb="8"
