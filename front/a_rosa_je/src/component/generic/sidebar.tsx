@@ -39,7 +39,7 @@ function Sidebar() {
                     href="/another"
                     variant="ghost"
                     color={"white"}
-                    // leftIcon={<Icon as={} />}
+                    leftIcon={<i className="fa-solid fa-home"></i>}
                     justifyContent="flex-start"
                     fontSize="2xl"
                     w="100%"
@@ -57,7 +57,7 @@ function Sidebar() {
                     href="/stock"
                     variant="ghost"
                     color={"white"}
-                    // leftIcon={<Icon as={FaBoxOpen} />}
+                    leftIcon={<i className="fa-solid fa-seedling"></i>}
                     justifyContent="flex-start"
                     w="100%"
                     fontSize="2xl"
@@ -75,7 +75,7 @@ function Sidebar() {
                     href="/setting"
                     variant="ghost"
                     color=  "white"
-                    // leftIcon={<Icon as={FaTools} />}
+                    leftIcon={<i className="fa-solid fa-gear"></i>}
                     justifyContent="flex-start"
                     w="100%"
                     fontSize="2xl"

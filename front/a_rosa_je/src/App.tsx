@@ -23,7 +23,7 @@ function Layout({ children }: { children: ReactNode }) {
             <Box>
                 <Header />
             </Box>
-            <Box ml="25%" mt={48}>
+            <Box>
                 {children}
             </Box>
         </>
