@@ -37,7 +37,7 @@ function SettingPage() {
                     Paramètres de l'application
                 </Heading>
 
-                {/* Paramètres généraux */}
+                
                 <VStack align="start" mb={6} spacing={4}>
                     <Text fontWeight="bold" fontSize="lg">
                         Général
@@ -61,7 +61,7 @@ function SettingPage() {
                 </VStack>
                 <Divider />
 
-                {/* Notifications */}
+
                 <VStack align="start" my={6} spacing={4}>
                     <Text fontWeight="bold" fontSize="lg">
                         Notifications
@@ -77,7 +77,7 @@ function SettingPage() {
                 </VStack>
                 <Divider />
 
-                {/* Sécurité */}
+
                 <VStack align="start" my={6} spacing={4}>
                     <Text fontWeight="bold" fontSize="lg">
                         Sécurité
@@ -107,7 +107,7 @@ function SettingPage() {
                 </VStack>
                 <Divider />
 
-                {/* Gestion du compte */}
+
                 <VStack align="start" my={6} spacing={4}>
                     <Text fontWeight="bold" fontSize="lg">
                         Compte
@@ -129,13 +129,12 @@ function SettingPage() {
                     </HStack>
                 </VStack>
 
-                {/* Bouton Enregistrer */}
+
                 <HStack justify="center" mt={6}>
                     <Button
                         colorScheme="green"
                         leftIcon={<FaSave />}
                         size="lg"
-                        onClick={() => alert("Paramètres enregistrés !")}
                     >
                         Enregistrer
                     </Button>
