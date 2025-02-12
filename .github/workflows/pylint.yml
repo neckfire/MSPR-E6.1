@@ -1,0 +1,39 @@
+name: Django Lint
+
+on: [push, pull_request]
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.10"]  # Changé pour 3.10
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v3
+      with:
+        python-version: ${{ matrix.python-version }}
+    
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install pylint
+        pip install pylint-django
+        pip install django
+        pip install djangorestframework
+        pip install django-cors-headers  # Ajout de cors-headers
+        if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+    
+    - name: Set Django settings
+      run: |
+        export DJANGO_SETTINGS_MODULE=a_rosa_je.settings
+        
+    - name: Analysing the code with pylint
+      run: |
+        export PYTHONPATH=$PYTHONPATH:$(pwd)
+        pylint --load-plugins=pylint_django \
+               --disable=C0114,C0115,C0116,C0301,C0304,C0103,R0901,R0903,W0611,W0401,W0614,E5142,C0411 \
+               --max-line-length=120 \
+               $(git ls-files '*.py')
