@@ -15,7 +15,7 @@ function Header() {
             h="10%"
             ml='15%'
             w='85%'
-            bg='#124660'
+            bg='black'
             position="fixed"
             p={4}
             color='white'

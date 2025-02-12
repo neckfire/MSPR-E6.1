@@ -14,7 +14,7 @@ import { useState } from "react";
 import {useNavigate} from "react-router-dom";
 
 export default function LoginPage() {
-    const [isLoginMode, setIsLoginMode] = useState(true); // État pour déterminer la vue affichée
+    const [isLoginMode, setIsLoginMode] = useState(true);
     const [showPassword, setShowPassword] = useState(false);
     const navigate = useNavigate();
 

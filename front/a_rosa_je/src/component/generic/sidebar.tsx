@@ -16,7 +16,7 @@ function Sidebar() {
             as="nav"
             w={{ base: "25%", md: "20%", lg: "15%" }}
             h="100vh"
-            bg="#124660"
+            bg="black"
             color="white"
             p="5"
             zIndex={1000}
@@ -38,13 +38,13 @@ function Sidebar() {
                     as="a"
                     href="/another"
                     variant="ghost"
-                    color={"white"}
+                    color={'white'}
                     leftIcon={<i className="fa-solid fa-home"></i>}
                     justifyContent="flex-start"
                     fontSize="2xl"
                     w="100%"
                     _hover={{
-                        bg: "#127db2cc",
+                        // bg: "#127db2cc",
                         transform: "scale(1.05)",
                     }}
                 >
@@ -56,13 +56,13 @@ function Sidebar() {
                     padding={8}
                     href="/stock"
                     variant="ghost"
-                    color={"white"}
+                    color={'white'}
                     leftIcon={<i className="fa-solid fa-seedling"></i>}
                     justifyContent="flex-start"
                     w="100%"
                     fontSize="2xl"
                     _hover={{
-                        bg: "#127db2cc",
+                        // bg: "#127db2cc",
                         transform: "scale(1.05)",
                     }}
                 >
@@ -74,13 +74,13 @@ function Sidebar() {
                     padding={8}
                     href="/setting"
                     variant="ghost"
-                    color=  "white"
+                    color={'white'}
                     leftIcon={<i className="fa-solid fa-gear"></i>}
                     justifyContent="flex-start"
                     w="100%"
                     fontSize="2xl"
                     _hover={{
-                        bg: "#127db2cc",
+                        bg: "darkGreen",
                         transform: "scale(1.05)",
                     }}
                 >
