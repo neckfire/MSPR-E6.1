@@ -3,7 +3,7 @@ import {Box} from "@chakra-ui/react";
 
 function ProductManagement() {
     return (
-        <Box>
+        <Box ml={'20%'} mt={'7%'}>
             <Card/>
         </Box>
 
