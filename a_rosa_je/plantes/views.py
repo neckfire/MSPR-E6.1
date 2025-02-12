@@ -1,5 +1,7 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.views import LogoutView
+
 from django.contrib.auth import login
 from .models import Plante, Photo, Conseil
 from .forms import PlanteForm, PhotoForm, ConseilForm
@@ -71,3 +73,7 @@ def register(request):
     else:
         form = UserCreationForm()
     return render(request, 'register.html', {'form': form})
+
+@login_required
+class CustomLogoutView(LogoutView):
+    template_name = 'logout.html'  # Le template personnalisé de déconnexion
