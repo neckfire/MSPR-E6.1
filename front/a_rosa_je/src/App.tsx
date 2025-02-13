@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-route
 import Sidebar from './component/generic/sidebar';
 import ProductManagementPage from './page/stock.tsx';
 import theme from './theme';
-import AnotherPage from "./page/another";
+import AnotherPage from "./page/plantSittingPage.tsx";
 import Header from "./component/generic/header.tsx";
 import LoginPage from "./page/LoginPage";
 import {ReactNode} from "react";
@@ -37,8 +37,8 @@ function App() {
                 <Layout>
                     <Routes>
                         <Route path="/login" element={<LoginPage />} />
-                        <Route path="/stock" element={<ProductManagementPage />} />
-                        <Route path="/another" element={<AnotherPage />} />
+                        <Route path="/plantsitting" element={<ProductManagementPage />} />
+                        <Route path="/home" element={<AnotherPage />} />
                         <Route path="/setting" element={<SettingPage />} />
                     </Routes>
                 </Layout>

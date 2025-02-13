@@ -15,7 +15,7 @@ const GenericButton = forwardRef<GenericButtonProps, "button">(
                 ref={ref}
                 leftIcon={leftIcon}
                 rightIcon={rightIcon}
-                bg={'#1B9476'}
+                bg={'#337418'}
                 colorScheme={"green"}
                 {...props}
             >

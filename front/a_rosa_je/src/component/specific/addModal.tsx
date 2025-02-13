@@ -67,13 +67,12 @@ const AddModal = ({ isOpen, onClose }: AddModalProps) => {
                 </FormControl>
                 {/* Add Button and Select */}
                 <Flex gap={4}>
-                    <Button leftIcon={<i className="fa-solid fa-plus"></i>} colorScheme="teal">
+                    <Button leftIcon={<i className="fa-solid fa-plus"></i>} bg={"#337418"} colorScheme={"green"}>
                         Add
                     </Button>
                     <Select placeholder="Type of plant">
                         <option>Indoor</option>
                         <option>Outdoor</option>
-                        <option>Succulent</option>
                     </Select>
                 </Flex>
                 {/* Plant Images */}
