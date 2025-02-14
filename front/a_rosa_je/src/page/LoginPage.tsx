@@ -73,7 +73,7 @@ export default function LoginPage() {
                     isClosable: true,
                 });
 
-                navigate("/stock");
+                navigate("/home");
             } else {
                 throw new Error(data.message || 'Erreur de connexion');
             }
@@ -136,7 +136,8 @@ export default function LoginPage() {
             alignItems="center"
             justifyContent="center"
             height="100vh"
-            bgImage="url(/src/assets/LoginBg.png)"
+            bgImage="url(/src/assets/bg.png)"
+            bgSize={"cover"}
             p={2}
             overflow="hidden"
         >

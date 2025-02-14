@@ -14,7 +14,7 @@ const Card = () => {
                         size="lg"
             />
             <Flex
-                bg={'#1B9476'}
+                bg={'#337418'}
                 borderRadius={5}
                 mt={"70%"} p={4}
                 align={'center'}
