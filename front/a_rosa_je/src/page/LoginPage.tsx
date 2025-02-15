@@ -13,6 +13,8 @@ import {
 } from "@chakra-ui/react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import useCurrentUserStore from "../store/CurrentUser.ts";
+import {fetchUserInfo} from "../api/GetUserInfos.tsx";
 
 export default function LoginPage() {
     const [isLoginMode, setIsLoginMode] = useState(true);
@@ -44,6 +46,8 @@ export default function LoginPage() {
         }));
     };
 
+    const setCurrentUser = useCurrentUserStore(state => state.setCurrentUser);
+
     const handleLogin = async (e) => {
         e.preventDefault();
         setIsLoading(true);
@@ -59,12 +63,16 @@ export default function LoginPage() {
                     password: formData.password,
                 }),
             });
-            console.log(formData);
+
             const data = await response.json();
 
             if (response.ok) {
-                // Stocker le token dans le localStorage
-                localStorage.setItem('authToken', data.key);
+                // On stocke d'abord un objet user minimal avec le token
+                setCurrentUser({ username: formData.username }, data.key);
+
+                // Ensuite on récupère les infos complètes
+                const userInfo = await fetchUserInfo();
+                console.log("User info retrieved:", userInfo); // Pour débugger
 
                 toast({
                     title: "Connexion réussie",

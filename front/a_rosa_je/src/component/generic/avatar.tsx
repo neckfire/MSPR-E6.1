@@ -10,19 +10,32 @@ import {
 } from "@chakra-ui/react";
 import { FiSettings, FiLogOut } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
+import useCurrentUserStore from "../../store/CurrentUser.ts";
+import {useEffect} from "react";
 
 interface AvatarMenuProps {
     avatarUrl?: string;
     userName?: string;
 }
 
-const AvatarMenu: React.FC<AvatarMenuProps> = ({
-                                                   avatarUrl,
-                                                   userName = "Utilisateur",
-                                               }) => {
+const AvatarMenu: React.FC<AvatarMenuProps> = () => {
     const navigate = useNavigate();
     const toast = useToast();
+    const user = useCurrentUserStore(state => state.user);
+    const token = useCurrentUserStore(state => state.token);
 
+    useEffect(() => {
+        // console.log("Current user:", user);
+        // console.log("Current token:", token);
+        console.log(user.first_name);
+        console.log(user.last_name);
+    }, [user, token]);
+
+    let fullName = `${user.first_name} ${user.last_name}`.trim();
+    console.log(fullName);
+    if (fullName == ""){
+        fullName = user.username;
+    }
     const handleLogout = async () => {
         try {
 
@@ -83,8 +96,7 @@ const AvatarMenu: React.FC<AvatarMenuProps> = ({
             <MenuButton>
                 <Avatar
                     size="md"
-                    name={userName}
-                    src={avatarUrl}
+                    name={fullName}
                     cursor="pointer"
                 />
             </MenuButton>

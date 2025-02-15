@@ -10,8 +10,9 @@ import {
     Select,
     Textarea,
     VStack,
-    Image, Flex
+    Image, Flex, Switch, Text
 } from "@chakra-ui/react";
+import {useRef} from "react";
 
 interface AddModalProps {
     isOpen: boolean;
@@ -19,11 +20,16 @@ interface AddModalProps {
 }
 
 const AddModal = ({ isOpen, onClose }: AddModalProps) => {
-
+    const fileInputRef = useRef<HTMLInputElement>(null);
     const handleConfirm = () => {
         console.log("Action validée !");
         onClose();
     };
+    const handleAdd = () => {
+        console.log('wouf wouf')
+        fileInputRef.current?.click();
+    };
+
 
     const plantImages = [
         "/src/assets/img.png",
@@ -65,9 +71,24 @@ const AddModal = ({ isOpen, onClose }: AddModalProps) => {
                         />
                     </HStack>
                 </FormControl>
+                <Flex>
+                    <FormControl>
+                        <Flex gap={5}>
+                            <Text>Plantsitting</Text>
+                            <Switch colorScheme={"green"}/>
+                        </Flex>
+                    </FormControl>
+                    <FormControl>
+                        <Flex gap={5}>
+                            <Text>Botanist</Text>
+                            <Switch colorScheme={"green"}/>
+                        </Flex>
+                    </FormControl>
+                </Flex>
+
                 {/* Add Button and Select */}
                 <Flex gap={4}>
-                    <Button leftIcon={<i className="fa-solid fa-plus"></i>} bg={"#337418"} colorScheme={"green"}>
+                    <Button leftIcon={<i className="fa-solid fa-plus"></i>} bg={"#337418"} colorScheme={"green"} onClick={handleAdd}>
                         Add
                     </Button>
                     <Select placeholder="Type of plant">
