@@ -25,12 +25,18 @@ export default function LoginPage() {
         password: "",
     });
 
+    const [formRegisterData, setFormRegisterData] = useState({
+        username: "",
+        email: "",
+        password: "",
+        password2: "",
+    });
+
     const navigate = useNavigate();
     const toast = useToast();
 
     const handleToggleMode = () => {
         setIsLoginMode((prevMode) => !prevMode);
-        // Réinitialiser le formulaire lors du changement de mode
         setFormData({ username: "", password: "" });
     };
 
@@ -40,10 +46,18 @@ export default function LoginPage() {
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
-        setFormData(prev => ({
-            ...prev,
-            [name]: value
-        }));
+
+        if (isLoginMode) {
+            setFormData(prev => ({
+                ...prev,
+                [name]: value
+            }));
+        } else {
+            setFormRegisterData(prev => ({
+                ...prev,
+                [name]: value
+            }));
+        }
     };
 
     const setCurrentUser = useCurrentUserStore(state => state.setCurrentUser);
@@ -103,12 +117,17 @@ export default function LoginPage() {
         setIsLoading(true);
 
         try {
-            const response = await fetch('http://localhost:8000/auth/register/', {
+            const response = await fetch('http://localhost:8000/auth/registration/', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify(formData),
+                body: JSON.stringify({
+                    username: formRegisterData.username,
+                    email: formRegisterData.email,
+                    password1: formRegisterData.password,
+                    password2: formRegisterData.password2,
+                }),
             });
 
             const data = await response.json();
@@ -123,7 +142,7 @@ export default function LoginPage() {
                 });
                 setIsLoginMode(true);
             } else {
-                throw new Error(data.message || 'Erreur lors de la création du compte');
+                throw new Error(data.non_field_errors?.join(", ") || "Erreur lors de la création du compte");
             }
         } catch (error) {
             toast({
@@ -266,7 +285,7 @@ export default function LoginPage() {
                             <VStack spacing={8} w="100%">
                                 <Input
                                     name="username"
-                                    value={formData.username}
+                                    value={formRegisterData.username}
                                     onChange={handleInputChange}
                                     placeholder="Identifiant"
                                     variant="flushed"
@@ -277,7 +296,7 @@ export default function LoginPage() {
                                 />
                                 <Input
                                     name="email"
-                                    value={formData.email}
+                                    value={formRegisterData.email}
                                     onChange={handleInputChange}
                                     placeholder="Email"
                                     variant="flushed"
@@ -290,11 +309,48 @@ export default function LoginPage() {
                                 <InputGroup size="md">
                                     <Input
                                         name="password"
-                                        value={formData.password}
+                                        value={formRegisterData.password}
                                         onChange={handleInputChange}
                                         pr="4.5rem"
                                         type={showPassword ? "text" : "password"}
                                         placeholder="Mot de passe"
+                                        variant="flushed"
+                                        color="white"
+                                        fontSize="1.5rem"
+                                        required
+                                    />
+                                    <InputRightElement width="4.5rem">
+                                        <IconButton
+                                            colorScheme="whiteAlpha"
+                                            h="1.75rem"
+                                            size="sm"
+                                            onClick={handlePasswordVisibility}
+                                            aria-label="Afficher/masquer mot de passe"
+                                            variant="ghost"
+                                            _hover={{ bgColor: "none" }}
+                                            icon={
+                                                <i
+                                                    className={
+                                                        showPassword
+                                                            ? "fa-regular fa-eye-slash"
+                                                            : "fa-regular fa-eye"
+                                                    }
+                                                    style={{
+                                                        color: "white",
+                                                    }}
+                                                />
+                                            }
+                                        />
+                                    </InputRightElement>
+                                </InputGroup>
+                                <InputGroup size="md">
+                                    <Input
+                                        name="password2"
+                                        value={formRegisterData.password2}
+                                        onChange={handleInputChange}
+                                        pr="4.5rem"
+                                        type={showPassword ? "text" : "password"}
+                                        placeholder="Confirmer le mot de passe"
                                         variant="flushed"
                                         color="white"
                                         fontSize="1.5rem"
