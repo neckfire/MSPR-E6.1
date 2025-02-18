@@ -3,13 +3,14 @@ import {
     Box,
     VStack,
     Button,
-    Text,
+    Image,
     Flex,
 } from '@chakra-ui/react';
 import { useLocation } from 'react-router-dom';
 
+
 function Sidebar() {
-    const location = useLocation(); // Hook pour obtenir l'URL actuelle
+    const location = useLocation();
 
     const menuItems = [
         { id: 'home', label: 'Home', icon: 'fa-solid fa-home', href: '/home' },
@@ -40,9 +41,6 @@ function Sidebar() {
                 justifyContent="center"
                 flexDirection="column"
             >
-                <Text fontSize="4xl">
-                    icone a-rosa-je
-                </Text>
             </Flex>
 
             <VStack spacing="4" align="stretch">

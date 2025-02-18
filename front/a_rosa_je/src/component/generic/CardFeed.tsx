@@ -1,6 +1,6 @@
 import {Avatar, Box, Flex, IconButton, Text} from "@chakra-ui/react";
 
-const Card = () => {
+const CardFeed = () => {
     return(
         <Box
             w={'20%'}
@@ -35,4 +35,4 @@ const Card = () => {
     )
 }
 
-export default Card;
+export default CardFeed;

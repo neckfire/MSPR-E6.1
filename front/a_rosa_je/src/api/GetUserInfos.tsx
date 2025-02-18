@@ -1,7 +1,7 @@
 import useCurrentUserStore from "../store/CurrentUser.ts";
 
 export const fetchUserInfo = async () => {
-    const store = useCurrentUserStore.getState(); // Récupérer l'état actuel
+    const store = useCurrentUserStore.getState();
     const { token, setCurrentUser } = store;
 
     if (!token) {
@@ -23,8 +23,8 @@ export const fetchUserInfo = async () => {
         console.log(response);
         const userData = await response.json();
 
-        // Mettre à jour le store avec les informations complètes de l'utilisateur
-        setCurrentUser(userData, token); // On garde le même token mais on met à jour les données user
+
+        setCurrentUser(userData, token);
 
         return userData;
     } catch (error) {
