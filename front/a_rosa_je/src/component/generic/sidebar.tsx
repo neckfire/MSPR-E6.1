@@ -3,7 +3,6 @@ import {
     Box,
     VStack,
     Button,
-    Image,
     Flex,
 } from '@chakra-ui/react';
 import { useLocation } from 'react-router-dom';

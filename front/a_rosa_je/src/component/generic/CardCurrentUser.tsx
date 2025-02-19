@@ -1,5 +1,4 @@
-import {Avatar, Box, Flex, IconButton, Text} from "@chakra-ui/react";
-
+import {Avatar, Box, Flex, IconButton, Menu, MenuButton, MenuItem, MenuList, Text} from "@chakra-ui/react";
 const CardCurrentUser = () => {
     return(
         <Box
@@ -20,16 +19,32 @@ const CardCurrentUser = () => {
                 align={'center'}
                 gap={3}
             >
-                <Avatar size={"md"}></Avatar>
-                <Text color={'white'} fontWeight={"bold"}>User</Text>
-                <IconButton
-                    aria-label={''}
-                    variant={'ghost'}
-                    icon={<i className="fa-solid fa-bars" style={{ fontSize: "1.5rem", color: "black" }}/>}
-                    size="lg"
-                    ml={'auto'}
-                    colorScheme={'green'}
-                />
+                <Flex justifyContent={'center'} alignItems={'center'} gap={4}>
+                    <Avatar size={"md"}></Avatar>
+                    <Text color={'white'} fontWeight={"bold"}>User</Text>
+                </Flex>
+                <Box ml={'auto'}>
+                    <Menu>
+                        <MenuButton
+                            as={IconButton}
+                            aria-label='Options'
+                            icon={<i
+                                className="fa-solid fa-bars" style={{ fontSize: "1.25rem", color: "black" }}/>}
+                            variant={'ghost'}
+                        />
+                        <MenuList>
+                            <MenuItem icon={<i
+                                className="fa-solid fa-pen"/>}>
+                                Edit
+                            </MenuItem>
+                            <MenuItem icon={<i
+                                className="fa-solid fa-trash"/>} >
+                                New Window
+                            </MenuItem>
+                        </MenuList>
+                    </Menu>
+                </Box>
+
             </Flex>
         </Box>
     )
