@@ -1,5 +1,7 @@
 import {Avatar, Box, Flex, IconButton, Menu, MenuButton, MenuItem, MenuList, Text} from "@chakra-ui/react";
+import {useNavigate} from "react-router-dom";
 const CardCurrentUser = () => {
+    const navigate = useNavigate();
     return(
         <Box
             w={'20%'}
@@ -19,7 +21,7 @@ const CardCurrentUser = () => {
                 align={'center'}
                 gap={3}
             >
-                <Flex justifyContent={'center'} alignItems={'center'} gap={4}>
+                <Flex justifyContent={'center'} alignItems={'center'} gap={4} onClick={() => navigate('/setting')} cursor={'pointer'}>
                     <Avatar size={"md"}></Avatar>
                     <Text color={'white'} fontWeight={"bold"}>User</Text>
                 </Flex>
