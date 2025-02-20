@@ -3,7 +3,7 @@ import {Box} from "@chakra-ui/react";
 import CardCurrentUser from "../component/generic/CardCurrentUser.tsx";
 
 
-function Plantsitting() {
+function HomePage() {
     return (
         <>
             <Box w={'100vw'} h={'100vh'} bgImage="url(/src/assets/bg.png)"  bgSize={"cover"} mt={0}>
@@ -21,4 +21,4 @@ function Plantsitting() {
     )
 }
 
-export default Plantsitting;
+export default HomePage;
