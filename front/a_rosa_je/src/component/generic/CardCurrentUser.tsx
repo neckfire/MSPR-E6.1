@@ -1,55 +1,64 @@
-import {Avatar, Box, Flex, IconButton, Menu, MenuButton, MenuItem, MenuList, Text} from "@chakra-ui/react";
-import {useNavigate} from "react-router-dom";
+import {
+    Card,
+    CardBody,
+    Flex,
+    Avatar,
+    Text,
+    IconButton,
+    Menu,
+    MenuButton,
+    MenuList,
+    MenuItem
+} from "@chakra-ui/react";
+
 const CardCurrentUser = () => {
-    const navigate = useNavigate();
-    return(
-        <Box
-            w={'20%'}
-            h={80}
-            position={'relative'}
-            bg={'gray.400'}
-            borderRadius={5}
+    return (
+        <Card
+            position="relative"
+            variant="elevation"
+            borderRadius="lg"
+            overflow="hidden"
+            boxShadow="md"
+            width={80}
+            height={350}
         >
-            <IconButton aria-label={''} variant={'ghost'} icon={<i
-                className="fa-regular fa-heart" style={{ fontSize: "1.5rem", color: "black" }}/>}
-                        size="lg"
-            />
+            {/* Main Card Body - Image Area */}
+            <CardBody p="0" />
+
+            {/* User Info Bar */}
             <Flex
                 bg={'#337418'}
-                borderRadius={5}
-                mt={"70%"} p={4}
-                align={'center'}
-                gap={3}
+                p="2"
+                align="center"
+                justify="space-between"
             >
-                <Flex justifyContent={'center'} alignItems={'center'} gap={4} onClick={() => navigate('/setting')} cursor={'pointer'}>
-                    <Avatar size={"md"}></Avatar>
-                    <Text color={'white'} fontWeight={"bold"}>User</Text>
+                <Flex align="center" gap="2">
+                    <Avatar  src="" />
+                    <Text color="white" fontSize="sm">User</Text>
                 </Flex>
-                <Box ml={'auto'}>
-                    <Menu>
-                        <MenuButton
-                            as={IconButton}
-                            aria-label='Options'
-                            icon={<i
-                                className="fa-solid fa-bars" style={{ fontSize: "1.25rem", color: "black" }}/>}
-                            variant={'ghost'}
-                        />
-                        <MenuList>
-                            <MenuItem icon={<i
-                                className="fa-solid fa-pen"/>}>
-                                Edit
-                            </MenuItem>
-                            <MenuItem icon={<i
-                                className="fa-solid fa-trash"/>} >
-                                New Window
-                            </MenuItem>
-                        </MenuList>
-                    </Menu>
-                </Box>
 
+                <Menu>
+                    <MenuButton
+                        as={IconButton}
+                        aria-label='Options'
+                        icon={<i
+                            className="fa-solid fa-bars" style={{ fontSize: "1.25rem", color: "black" }}/>}
+                        variant={'ghost'}
+                    />
+                    <MenuList>
+                        <MenuItem icon={<i
+                            className="fa-solid fa-pen"/>}>
+                            Edit
+                        </MenuItem>
+                        <MenuItem icon={<i
+                            className="fa-solid fa-trash"/>} >
+                            New Window
+                        </MenuItem>
+                    </MenuList>
+                </Menu>
             </Flex>
-        </Box>
-    )
-}
+        </Card>
+    );
+};
 
 export default CardCurrentUser;
