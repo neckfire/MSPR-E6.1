@@ -1,36 +1,100 @@
-import {
-    Box,
-    Button,
-    Input,
-    VStack,
-    Heading,
-    InputGroup,
-    InputRightElement,
-    IconButton,
-    Text,
-    Flex,
-} from "@chakra-ui/react";
+import { Box, Flex, Heading, useToast } from "@chakra-ui/react";
 import { useState } from "react";
-import {useNavigate} from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+
+import useCurrentUserStore from "../store/CurrentUser";
+import { fetchUserInfo } from "../api/GetUserInfos";
+import {loginUser, registerUser} from "../api/authQuery.ts";
+import {LoginForm} from "../component/specific/login/loginForm.tsx";
+import {RegisterForm} from "../component/specific/login/registerForm.tsx";
 
 export default function LoginPage() {
     const [isLoginMode, setIsLoginMode] = useState(true);
     const [showPassword, setShowPassword] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
+    const [formData, setFormData] = useState({
+        username: "",
+        password: "",
+    });
+    const [formRegisterData, setFormRegisterData] = useState({
+        username: "",
+        email: "",
+        password: "",
+        password2: "",
+    });
+
     const navigate = useNavigate();
+    const toast = useToast();
+    const setCurrentUser = useCurrentUserStore(state => state.setCurrentUser);
 
     const handleToggleMode = () => {
-        setIsLoginMode((prevMode) => !prevMode);
+        setIsLoginMode(prev => !prev);
+        setFormData({ username: "", password: "" });
     };
 
-    const handlePasswordVisibility = () => {
-        setShowPassword(!showPassword);
+    const handleInputChange = (e) => {
+        const { name, value } = e.target;
+        if (isLoginMode) {
+            setFormData(prev => ({ ...prev, [name]: value }));
+        } else {
+            setFormRegisterData(prev => ({ ...prev, [name]: value }));
+        }
     };
 
+    const handleLogin = async (e) => {
+        e.preventDefault();
+        setIsLoading(true);
+        try {
+            const data = await loginUser(formData);
+            setCurrentUser({ username: formData.username }, data.key);
+            await fetchUserInfo();
 
+            toast({
+                title: "Connexion réussie",
+                status: "success",
+                duration: 3000,
+                isClosable: true,
+            });
 
-    const handleLogin = () => {
-        navigate("/stock");
-    }
+            navigate("/home");
+        } catch (error) {
+            toast({
+                title: "Erreur",
+                description: error.message,
+                status: "error",
+                duration: 5000,
+                isClosable: true,
+            });
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    const handleRegister = async (e) => {
+        e.preventDefault();
+        setIsLoading(true);
+        try {
+            await registerUser(formRegisterData);
+            toast({
+                title: "Compte créé avec succès",
+                description: "Vous pouvez maintenant vous connecter",
+                status: "success",
+                duration: 3000,
+                isClosable: true,
+            });
+            setIsLoginMode(true);
+        } catch (error) {
+            toast({
+                title: "Erreur",
+                description: error.message,
+                status: "error",
+                duration: 5000,
+                isClosable: true,
+            });
+        } finally {
+            setIsLoading(false);
+        }
+    };
 
     return (
         <Box
@@ -38,7 +102,8 @@ export default function LoginPage() {
             alignItems="center"
             justifyContent="center"
             height="100vh"
-            bgImage="url(/src/assets/LoginBg.png)"
+            bgImage="url(/src/assets/bg.png)"
+            bgSize="cover"
             p={2}
             overflow="hidden"
         >
@@ -46,7 +111,7 @@ export default function LoginPage() {
                 width="800px"
                 height="500px"
                 bg="rgba(255, 255, 255, 0.1)"
-                backdropFilter={"blur(10px)"}
+                backdropFilter="blur(10px)"
                 borderRadius="lg"
                 boxShadow="lg"
                 overflow="hidden"
@@ -58,7 +123,6 @@ export default function LoginPage() {
                     transform={isLoginMode ? "translateX(0)" : "translateX(-50%)"}
                     transition="transform 0.5s ease-in-out"
                 >
-                    {/* SECTION CONNEXION */}
                     <Box
                         width="50%"
                         bg="rgba(0, 0, 0, 0.6)"
@@ -68,64 +132,17 @@ export default function LoginPage() {
                         justifyContent="center"
                         p={8}
                     >
-                        <Heading mb={6} color="white">
-                            Connexion
-                        </Heading>
-                        <VStack spacing={8} w="80%">
-                            <Input
-                                placeholder="Identifiant"
-                                variant="flushed"
-                                colorScheme="green"
-                                color="white"
-                                fontSize="1.5rem"
-                            />
-                            <InputGroup size="md">
-                                <Input
-                                    pr="4.5rem"
-                                    type={showPassword ? "text" : "password"}
-                                    placeholder="Mot de passe"
-                                    variant="flushed"
-                                    color="white"
-                                    fontSize="1.5rem"
-                                />
-                                <InputRightElement width="4.5rem">
-                                    <IconButton
-                                        colorScheme="whiteAlpha"
-                                        h="1.75rem"
-                                        size="sm"
-                                        onClick={handlePasswordVisibility}
-                                        aria-label="Afficher/masquer mot de passe"
-                                        variant="ghost"
-                                        _hover={{ bgColor: "none" }}
-                                        icon={
-                                            <i
-                                                className={
-                                                    showPassword
-                                                        ? "fa-regular fa-eye-slash"
-                                                        : "fa-regular fa-eye"
-                                                }
-                                                style={{
-                                                    color: "white",
-                                                }}
-                                            />
-                                        }
-                                    />
-                                </InputRightElement>
-                            </InputGroup>
-                            <Button colorScheme="green" onClick={handleLogin}>Se connecter</Button>
-                            <Text
-                                color="white"
-                                mt={4}
-                                cursor="pointer"
-                                _hover={{ textDecoration: "underline" }}
-                                onClick={handleToggleMode}
-                            >
-                                Pas encore de compte ? Créer un compte
-                            </Text>
-                        </VStack>
+                        <Heading mb={6} color="white">Connexion</Heading>
+                        <LoginForm
+                            formData={formData}
+                            onSubmit={handleLogin}
+                            onChange={handleInputChange}
+                            isLoading={isLoading}
+                            showPassword={showPassword}
+                            onTogglePassword={() => setShowPassword(!showPassword)}
+                            onToggleMode={handleToggleMode}
+                        />
                     </Box>
-
-                    {/* SECTION CREATION DE COMPTE */}
                     <Box
                         width="50%"
                         bg="rgba(0, 0, 0, 0.6)"
@@ -135,68 +152,16 @@ export default function LoginPage() {
                         justifyContent="center"
                         p={8}
                     >
-                        <Heading mb={6} color="white">
-                            Créer un compte
-                        </Heading>
-                        <VStack spacing={8  } w="80%">
-                            <Input
-                                placeholder="Identifiant"
-                                variant="flushed"
-                                colorScheme="green"
-                                color="white"
-                                fontSize="1.5rem"
-                            />
-                            <Input
-                                placeholder="Email"
-                                variant="flushed"
-                                colorScheme="green"
-                                color="white"
-                                fontSize="1.5rem"
-                            />
-                            <InputGroup size="md">
-                                <Input
-                                    pr="4.5rem"
-                                    type={showPassword ? "text" : "password"}
-                                    placeholder="Mot de passe"
-                                    variant="flushed"
-                                    color="white"
-                                    fontSize="1.5rem"
-                                />
-                                <InputRightElement width="4.5rem">
-                                    <IconButton
-                                        colorScheme="whiteAlpha"
-                                        h="1.75rem"
-                                        size="sm"
-                                        onClick={handlePasswordVisibility}
-                                        aria-label="Afficher/masquer mot de passe"
-                                        variant="ghost"
-                                        _hover={{ bgColor: "none" }}
-                                        icon={
-                                            <i
-                                                className={
-                                                    showPassword
-                                                        ? "fa-regular fa-eye-slash"
-                                                        : "fa-regular fa-eye"
-                                                }
-                                                style={{
-                                                    color: "white",
-                                                }}
-                                            />
-                                        }
-                                    />
-                                </InputRightElement>
-                            </InputGroup>
-                            <Button colorScheme="green" onClick={handleLogin} >Créer un compte</Button>
-                            <Text
-                                color="white"
-                                mt={4}
-                                cursor="pointer"
-                                _hover={{ textDecoration: "underline" }}
-                                onClick={handleToggleMode}
-                            >
-                                Déjà un compte ? Se connecter
-                            </Text>
-                        </VStack>
+                        <Heading mb={6} color="white">Créer un compte</Heading>
+                        <RegisterForm
+                            formData={formRegisterData}
+                            onSubmit={handleRegister}
+                            onChange={handleInputChange}
+                            isLoading={isLoading}
+                            showPassword={showPassword}
+                            onTogglePassword={() => setShowPassword(!showPassword)}
+                            onToggleMode={handleToggleMode}
+                        />
                     </Box>
                 </Flex>
             </Box>

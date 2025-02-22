@@ -40,7 +40,7 @@ const GenericModal: FC<GenericModalProps> = ({
                     <Button variant="ghost" onClick={onCancel || onClose}>
                         Annuler
                     </Button>
-                    <Button colorScheme="green" ml={3} onClick={onConfirm}>
+                    <Button colorScheme="green" bg={'#337418'} ml={3} onClick={onConfirm}>
                         Valider
                     </Button>
                 </ModalFooter>

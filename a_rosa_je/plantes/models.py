@@ -7,6 +7,7 @@ class Plante(models.Model):
     localisation = models.CharField(max_length=200)
     proprietaire = models.ForeignKey(User, on_delete=models.CASCADE, related_name='plantes')
 
+
 class Photo(models.Model):
     image = models.ImageField(upload_to='plantes')
     plante = models.ForeignKey(Plante, on_delete=models.CASCADE, related_name='photos')
