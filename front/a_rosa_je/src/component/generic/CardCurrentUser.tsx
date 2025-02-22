@@ -20,21 +20,8 @@ const CardCurrentUser = () => {
             overflow="hidden"
             boxShadow="md"
             width={80}
-            height={80}
+            height={350}
         >
-            {/* Heart Icon */}
-            <IconButton
-                icon={<i className="fa-solid fa-heart" style={{fontSize: "1.5rem", color: "black"}}/>}
-                variant="ghost"
-                position="absolute"
-                top="2"
-                left="2"
-                color="gray.600"
-                _hover={{ color: "red.500" }}
-                aria-label="Like"
-                size="sm"
-            />
-
             {/* Main Card Body - Image Area */}
             <CardBody p="0" />
 
