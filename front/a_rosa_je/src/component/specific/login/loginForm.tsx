@@ -15,10 +15,10 @@ export const LoginForm = ({
     <form onSubmit={onSubmit} style={{ width: '80%' }}>
         <VStack spacing={8} w="100%">
             <FormInput
-                name="username"
-                value={formData.username}
+                name="email"
+                value={formData.email}
                 onChange={onChange}
-                placeholder="Identifiant"
+                placeholder="E-mail"
             />
             <PasswordInput
                 name="password"

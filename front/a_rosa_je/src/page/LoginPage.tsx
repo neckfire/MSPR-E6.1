@@ -13,14 +13,13 @@ export default function LoginPage() {
     const [showPassword, setShowPassword] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [formData, setFormData] = useState({
-        username: "",
+        email: "",
         password: "",
     });
     const [formRegisterData, setFormRegisterData] = useState({
-        username: "",
         email: "",
         password: "",
-        password2: "",
+        is_botanist: false
     });
 
     const navigate = useNavigate();
@@ -29,7 +28,7 @@ export default function LoginPage() {
 
     const handleToggleMode = () => {
         setIsLoginMode(prev => !prev);
-        setFormData({ username: "", password: "" });
+        setFormData({ email: "", password: "" });
     };
 
     const handleInputChange = (e) => {
@@ -45,22 +44,38 @@ export default function LoginPage() {
         e.preventDefault();
         setIsLoading(true);
         try {
-            const data = await loginUser(formData);
-            setCurrentUser({ username: formData.username }, data.key);
-            await fetchUserInfo();
+            const loginCredentials = {
+                email: formData.email,  // assurez-vous que c'est bien l'email
+                password: formData.password
+            };
 
-            toast({
-                title: "Connexion réussie",
-                status: "success",
-                duration: 3000,
-                isClosable: true,
-            });
+            const data = await loginUser(loginCredentials);
 
-            navigate("/home");
+            // Vérifiez la structure de la réponse
+            if (data.access_token) {
+                // Stockez le token
+                localStorage.setItem('token', data.access_token);
+
+                // Mise à jour du state utilisateur
+                setCurrentUser({
+                    email: formData.email,
+                    token: data.access_token
+                });
+
+                toast({
+                    title: "Connexion réussie",
+                    status: "success",
+                    duration: 3000,
+                    isClosable: true,
+                });
+
+                navigate("/home");
+            }
         } catch (error) {
+            console.error('Erreur de connexion:', error);
             toast({
-                title: "Erreur",
-                description: error.message,
+                title: "Erreur de connexion",
+                description: error.message || "Une erreur est survenue lors de la connexion",
                 status: "error",
                 duration: 5000,
                 isClosable: true,

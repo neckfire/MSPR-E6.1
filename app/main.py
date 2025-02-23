@@ -15,11 +15,17 @@ app = FastAPI(title="A_rosa_je API", )
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5000", "http://localhost:8000"],
+     allow_origins=["http://localhost:5000"],
     allow_credentials=True,
-    allow_methods=["*"],
+    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allow_headers=["*"],
+    expose_headers=["*"]
 )
+
+@app.options("/{rest_of_path:path}")
+async def preflight_handler():
+    return fastapi.responses.Response(status_code=204)
+
 
 @app.post("/token")
 async def login(db: Session = Depends(get_db), form_data: OAuth2PasswordRequestForm = Depends()):

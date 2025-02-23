@@ -3,23 +3,21 @@ export const loginUser = async (credentials) => {
         method: 'POST',
         headers: {
             'Content-Type': 'application/x-www-form-urlencoded',
-            'Accept': 'application/json'
         },
         body: new URLSearchParams({
             username: credentials.email,
             password: credentials.password,
         }),
-        credentials: 'include',
-        mode: 'cors'
     });
 
     if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.detail || 'Erreur de connexion');
+        const data = await response.json();
+        throw new Error(data.message || 'Erreur de connexion');
     }
 
     return response.json();
 };
+
 
 export const registerUser = async (userData) => {
     const response = await fetch('http://localhost:8000/users/', {
