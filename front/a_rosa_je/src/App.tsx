@@ -8,6 +8,7 @@ import {ReactNode} from "react";
 import SettingPage from "./page/settingPage.tsx";
 import HomePage from "./page/HomePage.tsx";
 import PlantsittingPage from "./page/plantSittingPage.tsx";
+import LikePage from './page/LikePage.tsx';
 
 function Layout({ children }: { children: ReactNode }) {
     const location = useLocation();
@@ -40,6 +41,7 @@ function App() {
                         <Route path="/plantsitting" element={<PlantsittingPage />} />
                         <Route path="/home" element={<HomePage />} />
                         <Route path="/setting" element={<SettingPage />} />
+                        <Route path={"/like"} element={<LikePage/>}/>
                     </Routes>
                 </Layout>
             </Router>
