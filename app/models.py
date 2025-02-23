@@ -14,7 +14,10 @@ class User(Base):
     hashed_password = Column(String)
     is_active = Column(Boolean, default=True)
     is_botanist = Column(Boolean, default=False)
-    plants = relationship("Plant", back_populates="owner")
+    # Only define the owned plants relationship here
+    owned_plants = relationship("Plant",
+                                back_populates="owner",
+                                foreign_keys="[Plant.owner_id]")
 
 
 class Plant(Base):
@@ -27,18 +30,13 @@ class Plant(Base):
     photo_url = Column(String)
     owner_id = Column(Integer, ForeignKey("users.id"))
     created_at = Column(DateTime, default=datetime.now(timezone.utc))
-    owner = relationship("User", back_populates="plants")
-    care_requests = relationship("CareRequest", back_populates="plant")
+    in_care = Column(Boolean, default=False)
+    plant_sitting = Column(Integer, ForeignKey("users.id"), nullable=True)
 
-
-class CareRequest(Base):
-    __tablename__ = "care_requests"
-
-    id = Column(Integer, primary_key=True, index=True)
-    plant_id = Column(Integer, ForeignKey("plants.id"))
-    botanist_id = Column(Integer, ForeignKey("users.id"), nullable=True)
-    status = Column(String)  # pending, accepted, completed
-    start_date = Column(DateTime)
-    end_date = Column(DateTime)
-    created_at = Column(DateTime, default=datetime.now(timezone.utc))
-    plant = relationship("Plant", back_populates="care_requests")
+    # Define both relationships here
+    owner = relationship("User",
+                         foreign_keys=[owner_id],
+                         back_populates="owned_plants")
+    sitter = relationship("User",
+                          foreign_keys=[plant_sitting],
+                          primaryjoin="Plant.plant_sitting == User.id")
