@@ -1,4 +1,5 @@
 import fastapi.responses
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi import FastAPI, Depends, HTTPException, status, UploadFile, File
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
@@ -12,6 +13,13 @@ models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI(title="A_rosa_je API", )
 
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:5000", "http://localhost:8000"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 @app.post("/token")
 async def login(db: Session = Depends(get_db), form_data: OAuth2PasswordRequestForm = Depends()):
