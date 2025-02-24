@@ -1,7 +1,9 @@
+import os
 import fastapi.responses
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi import FastAPI, Depends, HTTPException, status, UploadFile, File
 from fastapi.security import OAuth2PasswordRequestForm
+from fastapi.staticfiles import StaticFiles
 from sqlalchemy.orm import Session
 from datetime import timedelta
 from typing import List
@@ -9,9 +11,15 @@ from app import schemas, auth, models
 from app.database import engine, get_db
 from app.config import settings
 
+base_url = "localhost:8000"
 models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI(title="A_rosa_je API", )
+# Create the photos directory if it doesn't exist
+os.makedirs("photos", exist_ok=True)
+
+# Add this after creating the FastAPI app
+app.mount("/photos", StaticFiles(directory="photos"), name="photos")
 
 app.add_middleware(
     CORSMiddleware,
@@ -183,6 +191,9 @@ async def list_plants(
        - Valid JWT token in Authorization header
    """
     plants = db.query(models.Plant).filter(models.Plant.owner == current_user).all()
+    for plant in plants:
+        photofile = plant.photo_url
+        plant.photo_url = base_url + "/" +  photofile
     return plants
 
 
