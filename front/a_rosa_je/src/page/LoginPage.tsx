@@ -3,7 +3,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import useCurrentUserStore from "../store/CurrentUser";
-import { fetchUserInfo } from "../api/GetUserInfos";
+// import { fetchUserInfo } from "../api/GetUserInfos";
 import {loginUser, registerUser} from "../api/authQuery.ts";
 import {LoginForm} from "../component/specific/login/loginForm.tsx";
 import {RegisterForm} from "../component/specific/login/registerForm.tsx";
@@ -45,18 +45,16 @@ export default function LoginPage() {
         setIsLoading(true);
         try {
             const loginCredentials = {
-                email: formData.email,  // assurez-vous que c'est bien l'email
+                email: formData.email,
                 password: formData.password
             };
 
             const data = await loginUser(loginCredentials);
 
-            // Vérifiez la structure de la réponse
             if (data.access_token) {
-                // Stockez le token
                 localStorage.setItem('token', data.access_token);
 
-                // Mise à jour du state utilisateur
+
                 setCurrentUser({
                     email: formData.email,
                     token: data.access_token
