@@ -1,4 +1,4 @@
-import GenericModal from "../generic/genericModal.tsx";
+import React, { useRef, useState } from 'react';
 import {
     Box,
     Button,
@@ -7,12 +7,13 @@ import {
     HStack,
     IconButton,
     Input,
-    Select,
     Textarea,
     VStack,
-    Image, Flex, Switch, Text
+    Image,
+    Flex,
+    useToast
 } from "@chakra-ui/react";
-import {useRef} from "react";
+import GenericModal from "../generic/genericModal.tsx";
 
 interface AddModalProps {
     isOpen: boolean;
@@ -21,82 +22,151 @@ interface AddModalProps {
 
 const AddModal = ({ isOpen, onClose }: AddModalProps) => {
     const fileInputRef = useRef<HTMLInputElement>(null);
-    const handleConfirm = () => {
-        console.log("Action validée !");
-        onClose();
+    const toast = useToast();
+    const [formData, setFormData] = useState({
+        name: '',
+        location: '',
+        care_instructions: '',
+    });
+    const [selectedFile, setSelectedFile] = useState<File | null>(null);
+    const [previewUrls, setPreviewUrls] = useState<string[]>([]);
+
+    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+        const { name, value } = e.target;
+        setFormData(prev => ({
+            ...prev,
+            [name]: value
+        }));
     };
+
+    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (e.target.files && e.target.files[0]) {
+            const file = e.target.files[0];
+            setSelectedFile(file);
+
+            // Create preview URL
+            const url = URL.createObjectURL(file);
+            setPreviewUrls([...previewUrls, url]);
+        }
+    };
+
     const handleAdd = () => {
-        console.log('wouf wouf')
         fileInputRef.current?.click();
     };
 
+    const handleSubmit = async () => {
+        try {
+            // Construire l'URL avec les paramètres
+            const queryParams = new URLSearchParams({
+                name: formData.name,
+                location: formData.location,
+                care_instructions: formData.care_instructions
+            });
 
-    const plantImages = [
-        "/src/assets/img.png",
-        "/src/assets/img.png",
-        "/src/assets/img.png",
-        "/src/assets/img.png",
-        "/src/assets/img.png",
-    ];
+            const submitData = new FormData();
+            if (selectedFile) {
+                submitData.append('photo', selectedFile);
+            }
+
+            // Pour débugger
+            console.log('URL params:', queryParams.toString());
+
+            const response = await fetch(`http://localhost:8000/plants/?${queryParams}`, {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                },
+                body: submitData // On envoie uniquement la photo dans le body
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.detail || 'Failed to submit plant');
+            }
+
+            const result = await response.json();
+            toast({
+                title: 'Plant added successfully',
+                status: 'success',
+                duration: 3000,
+                isClosable: true,
+            });
+
+            onClose();
+        } catch (error) {
+            toast({
+                title: 'Error adding plant',
+                description: error instanceof Error ? error.message : 'Unknown error occurred',
+                status: 'error',
+                duration: 3000,
+                isClosable: true,
+            });
+        }
+    };
 
     return (
         <GenericModal
             isOpen={isOpen}
             onClose={onClose}
-            title="Ajouter un post"
+            title="Ajouter une plante"
             size="lg"
-            onConfirm={handleConfirm}
+            onConfirm={handleSubmit}
         >
             <VStack spacing={4} align="stretch">
-                {/* Title Input */}
                 <FormControl isRequired>
-                    <FormLabel>Title</FormLabel>
-                    <Input placeholder="Enter title" />
+                    <FormLabel>Nom</FormLabel>
+                    <Input
+                        name="name"
+                        value={formData.name}
+                        onChange={handleInputChange}
+                        placeholder="Entrez le nom de la plante"
+                    />
                 </FormControl>
 
-                {/* Resume Textarea */}
                 <FormControl>
-                    <FormLabel>Resume</FormLabel>
-                    <Textarea placeholder="Enter resume" />
+                    <FormLabel>Instructions d'entretien</FormLabel>
+                    <Textarea
+                        name="care_instructions"
+                        value={formData.care_instructions}
+                        onChange={handleInputChange}
+                        placeholder="Entrez les instructions d'entretien"
+                    />
                 </FormControl>
 
-                {/* Location Input */}
                 <FormControl isRequired>
-                    <FormLabel>Location</FormLabel>
+                    <FormLabel>Localisation</FormLabel>
                     <HStack>
-                        <Input placeholder="Enter location" />
+                        <Input
+                            name="location"
+                            value={formData.location}
+                            onChange={handleInputChange}
+                            placeholder="Entrez la localisation"
+                        />
                         <IconButton
                             aria-label="Search location"
                             icon={<i className="fa-solid fa-location-dot"></i>}
                         />
                     </HStack>
                 </FormControl>
-                <Flex>
-                    <FormControl>
-                        <Flex gap={5}>
-                            <Text>Plantsitting</Text>
-                            <Switch colorScheme={"green"}/>
-                        </Flex>
-                    </FormControl>
-                    <FormControl>
-                        <Flex gap={5}>
-                            <Text>Botanist</Text>
-                            <Switch colorScheme={"green"}/>
-                        </Flex>
-                    </FormControl>
+
+                <Flex gap={4}>
+                    <Button
+                        leftIcon={<i className="fa-solid fa-plus"></i>}
+                        bg="#337418"
+                        colorScheme="green"
+                        onClick={handleAdd}
+                    >
+                        Ajouter une photo
+                    </Button>
+                    <input
+                        type="file"
+                        ref={fileInputRef}
+                        onChange={handleFileChange}
+                        accept="image/*"
+                        style={{ display: 'none' }}
+                    />
                 </Flex>
 
-                {/* Add Button and Select */}
-                <Flex gap={4}>
-                    <Button leftIcon={<i className="fa-solid fa-plus"></i>} bg={"#337418"} colorScheme={"green"} onClick={handleAdd}>
-                        Add
-                    </Button>
-                    <Select placeholder="Type of plant">
-                        <option>Indoor</option>
-                        <option>Outdoor</option>
-                    </Select>
-                </Flex>
-                {/* Plant Images */}
                 <HStack spacing={4} overflowX="auto" pt={2} sx={{
                     "&::-webkit-scrollbar": {
                         width: "8px",
@@ -114,7 +184,7 @@ const AddModal = ({ isOpen, onClose }: AddModalProps) => {
                         borderRadius: "4px",
                     },
                 }}>
-                    {plantImages.map((src, index) => (
+                    {previewUrls.map((url, index) => (
                         <Box
                             key={index}
                             borderWidth="1px"
@@ -122,7 +192,7 @@ const AddModal = ({ isOpen, onClose }: AddModalProps) => {
                             overflow="hidden"
                             minW="120px"
                         >
-                            <Image src={src} alt={`Plant ${index + 1}`} />
+                            <Image src={url} alt={`Plant ${index + 1}`} />
                         </Box>
                     ))}
                 </HStack>

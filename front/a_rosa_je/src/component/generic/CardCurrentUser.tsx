@@ -8,10 +8,27 @@ import {
     Menu,
     MenuButton,
     MenuList,
-    MenuItem
+    MenuItem,
+    Image,
 } from "@chakra-ui/react";
 
-const CardCurrentUser = () => {
+interface Plant {
+    name: string;
+    location: string;
+    care_instructions: string;
+    id: number;
+    photo_url: string;
+    owner_id: number;
+    created_at: string;
+    in_care: boolean;
+    plant_sitting: number | null;
+}
+
+interface CardCurrentUserProps {
+    plant: Plant;
+}
+
+const CardCurrentUser = ({ plant }: CardCurrentUserProps) => {
     return (
         <Card
             position="relative"
@@ -23,7 +40,28 @@ const CardCurrentUser = () => {
             height={350}
         >
             {/* Main Card Body - Image Area */}
-            <CardBody p="0" />
+            <CardBody p="0">
+                <Image
+                    src={`http://localhost:8000/${plant.photo_url}`}
+                    alt={plant.name}
+                    objectFit="cover"
+                    w="100%"
+                    h="100%"
+                />
+                <Flex
+                    position="absolute"
+                    bottom="50px"
+                    left="0"
+                    right="0"
+                    p="2"
+                    mb={3}
+                    bg="rgba(0, 0, 0, 0.4)"
+                    color="white"
+                    flexDirection="column"
+                >
+                    <Text fontSize="lg" fontWeight="bold">{plant.name}</Text>
+                </Flex>
+            </CardBody>
 
             {/* User Info Bar */}
             <Flex
@@ -31,10 +69,13 @@ const CardCurrentUser = () => {
                 p="2"
                 align="center"
                 justify="space-between"
+                position="absolute"
+                bottom="0"
+                width="100%"
             >
                 <Flex align="center" gap="2">
-                    <Avatar  src="" />
-                    <Text color="white" fontSize="sm">User</Text>
+                    <Avatar src="" />
+                    <Text color="white" fontSize="sm">Owner</Text>
                 </Flex>
 
                 <Menu>
@@ -52,7 +93,7 @@ const CardCurrentUser = () => {
                         </MenuItem>
                         <MenuItem icon={<i
                             className="fa-solid fa-trash"/>} >
-                            New Window
+                            Delete
                         </MenuItem>
                     </MenuList>
                 </Menu>

@@ -1,11 +1,23 @@
-import { Box, Grid, Flex } from "@chakra-ui/react";
+import { Box, Grid, Flex, useToast } from "@chakra-ui/react";
 import CardCurrentUser from "../component/generic/CardCurrentUser.tsx";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import KPI from "../component/specific/StatOverlay/KPI.tsx";
 
+interface Plant {
+    name: string;
+    location: string;
+    care_instructions: string;
+    id: number;
+    photo_url: string;
+    owner_id: number;
+    created_at: string;
+    in_care: boolean;
+    plant_sitting: number | null;
+}
+
 const HomePage = () => {
-
-
+    const [plants, setPlants] = useState<Plant[]>([]);
+    const toast = useToast();
 
     useEffect(() => {
         document.body.style.overflow = "hidden";
@@ -13,6 +25,35 @@ const HomePage = () => {
             document.body.style.overflow = "auto";
         };
     }, []);
+
+    useEffect(() => {
+        const fetchPlants = async () => {
+            try {
+                const response = await fetch('http://localhost:8000/plants/', {
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                    },
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to fetch plants');
+                }
+
+                const data = await response.json();
+                setPlants(data);
+            } catch (error) {
+                toast({
+                    title: 'Error fetching plants',
+                    description: error instanceof Error ? error.message : 'Unknown error occurred',
+                    status: 'error',
+                    duration: 3000,
+                    isClosable: true,
+                });
+            }
+        };
+
+        fetchPlants();
+    }, [toast]);
 
     return (
         <Box
@@ -31,12 +72,8 @@ const HomePage = () => {
                     sx={{
                         overflow: 'auto',
                         position: 'relative',
-
-                        // Firefox scrollbar styling
                         scrollbarWidth: 'thin',
                         scrollbarColor: '#888888 #f1f1f1',
-
-                        // Webkit (Chrome, Safari, Edge) scrollbar styling
                         '&::-webkit-scrollbar': {
                             width: '8px',
                             background: 'transparent',
@@ -52,14 +89,11 @@ const HomePage = () => {
                                 background: '#555555',
                             },
                         },
-
-                        // Hide default arrows
                         '&::-webkit-scrollbar-button': {
                             display: 'none',
                         },
                     }}
                 >
-
                     <Grid
                         templateColumns="repeat(3, 1fr)"
                         gap="10"
@@ -67,8 +101,8 @@ const HomePage = () => {
                         maxW="800px"
                         mx="auto"
                     >
-                        {[...Array(9)].map((_, index) => (
-                            <CardCurrentUser key={index} />
+                        {plants.map((plant) => (
+                            <CardCurrentUser key={plant.id} plant={plant} />
                         ))}
                     </Grid>
                     <KPI/>
@@ -79,4 +113,3 @@ const HomePage = () => {
 };
 
 export default HomePage;
-
