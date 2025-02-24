@@ -131,7 +131,7 @@ async def delete_user(id: int, db: Session = Depends(get_db), current_user: mode
     return db_user
 
 
-@app.post("/plants/", response_model=schemas.Plant)
+@app.post("/plants/")
 async def create_plant(
         name: str,
         location: str,
@@ -166,7 +166,7 @@ async def create_plant(
 
     db_plant = models.Plant(**plant_data)
     if photo:
-        photo_path = f"photos/{current_user.id}_{photo.filename}"
+        photo_path = f"{base_url}/photos/{current_user.id}_{photo.filename}"
         with open(photo_path, "wb") as buffer:
             content = await photo.read()
             buffer.write(content)
@@ -177,9 +177,111 @@ async def create_plant(
     db.refresh(db_plant)
     return db_plant
 
+@app.put("/plants/{plant_id}")
+async def update_plant(
+        plant_id: int,
+        name: str = None,
+        location: str = None,
+        care_instructions: str | None = None,
+        photo: UploadFile = File(None),
+        current_user: models.User = Depends(auth.get_current_user),
+        in_care: bool = None,
+        db: Session = Depends(get_db)
+):
+    """
+    Update an existing plant.
+
+    Parameters:
+    - plant_id: ID of the plant to update
+    - name: New name of the plant (optional)
+    - location: New location of the plant (optional)
+    - care_instructions: New care instructions (optional)
+    - photo: New photo file of the plant (optional)
+    - in_care: New care status (optional)
+
+    Returns:
+    - Updated plant object
+
+    Raises:
+    - 404: If plant is not found or not owned by user
+
+    Requires:
+    - Valid JWT token in Authorization header
+    """
+    plant = db.query(models.Plant).filter(
+        models.Plant.id == plant_id,
+        models.Plant.owner_id == current_user.id
+    ).first()
+    
+    if plant is None:
+        raise HTTPException(
+            status_code=404,
+            detail="Plant not found or not owned by current user"
+        )
+    
+    if name is not None:
+        plant.name = name
+    
+    if location is not None:
+        plant.location = location
+    
+    if care_instructions is not None:
+        plant.care_instructions = care_instructions
+    
+    if in_care is not None:
+        plant.in_care = in_care
+    
+    if photo and photo.filename:
+        if plant.photo_url and os.path.exists(plant.photo_url.replace(f"{base_url}/", "")):
+            try:
+                os.remove(plant.photo_url.replace(f"{base_url}/", ""))
+            except Exception as e:
+                print(f"Error removing old photo: {e}")
+        
+        photo_filename = f"{current_user.id}_{photo.filename}"
+        photo_path = f"photos/{photo_filename}"
+        
+        with open(photo_path, "wb") as buffer:
+            content = await photo.read()
+            buffer.write(content)
+        
+        plant.photo_url = f"{base_url}/photos/{photo_filename}"
+    
+    db.commit()
+    db.refresh(plant)
+    
+    return plant
+
+@app.delete("/plants")
+async def delete_plant(
+        plant_id: int,
+        db: Session = Depends(get_db)
+):
+    """
+       Delete a plant.
+
+       Parameters:
+       - id: int: the id of the plant to delete
+
+       Returns:
+       - Modified plant object
+
+       Requires:
+       - Valid JWT token in Authorization header
+   """
+    plant = db.query(models.Plant).filter(models.Plant.id == plant_id).first()
+    try:
+        db.delete(plant)
+        db.commit()
+        return plant
+    except Exception as e:
+        return fastapi.HTTPException(
+            status_code=404,
+            detail="The plant was not found"
+        )
 
 @app.get("/my_plants/", response_model=List[schemas.Plant])
-async def list_plants(
+async def list_plants_users_plant(
         current_user: models.User = Depends(auth.get_current_user),
         db: Session = Depends(get_db)
 ):
@@ -200,7 +302,7 @@ async def list_plants(
     return plants
 
 @app.get("/all_plants/", response_model=List[schemas.Plant])
-async def list_plants(
+async def list_all_plants_except_users(
         current_user: models.User = Depends(auth.get_current_user),
         db: Session = Depends(get_db)
 ):

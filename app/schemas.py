@@ -4,8 +4,12 @@ from typing import Optional
 
 class UserBase(BaseModel):
     email: EmailStr
+    username: str
+    phone: str
 
 class UserCreate(UserBase):
+    username: str
+    phone: str
     password: str
     is_botanist: bool = False
 
@@ -31,7 +35,7 @@ class PlantCreate(PlantBase):
 class Plant(PlantBase):
     id: int
     photo_url: str | None
-    owner_id: int
+    owner: User
     created_at: datetime
     in_care: bool
     plant_sitting: int | None
