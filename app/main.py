@@ -136,8 +136,9 @@ async def create_plant(
         name: str,
         location: str,
         care_instructions: str | None = None,
-        photo: UploadFile = File(None),
+        photo: UploadFile = File(),
         current_user: models.User = Depends(auth.get_current_user),
+        in_care: bool = False,
         db: Session = Depends(get_db)
 ):
     """
@@ -159,7 +160,8 @@ async def create_plant(
         "name": name,
         "location": location,
         "care_instructions": care_instructions,
-        "owner_id": current_user.id
+        "owner_id": current_user.id,
+        "in_care": in_care
     }
 
     db_plant = models.Plant(**plant_data)
@@ -176,7 +178,7 @@ async def create_plant(
     return db_plant
 
 
-@app.get("/plants/", response_model=List[schemas.Plant])
+@app.get("/my_plants/", response_model=List[schemas.Plant])
 async def list_plants(
         current_user: models.User = Depends(auth.get_current_user),
         db: Session = Depends(get_db)
@@ -193,14 +195,34 @@ async def list_plants(
     plants = db.query(models.Plant).filter(models.Plant.owner == current_user).all()
     for plant in plants:
         photofile = plant.photo_url
-        plant.photo_url = base_url + "/" +  photofile
+        if plant.photo_url:
+            plant.photo_url = base_url + "/" +  photofile
     return plants
 
+@app.get("/all_plants/", response_model=List[schemas.Plant])
+async def list_plants(
+        current_user: models.User = Depends(auth.get_current_user),
+        db: Session = Depends(get_db)
+):
+    """
+       List all plants owned by the current user.
+
+       Returns:
+       - List of plant objects owned by the authenticated user
+
+       Requires:
+       - Valid JWT token in Authorization header
+   """
+    plants = db.query(models.Plant).filter(models.Plant.owner != current_user).all()
+    for plant in plants:
+        photofile = plant.photo_url
+        if plant.photo_url:
+            plant.photo_url = base_url + "/" +  photofile
+    return plants
 
 @app.put("/plants/{plant_id}/start-care", response_model=schemas.Plant)
 async def start_plant_care(
         plant_id: int,
-        botanist_id: int,
         current_user: models.User = Depends(auth.get_current_user),
         db: Session = Depends(get_db)
 ):
@@ -225,15 +247,7 @@ async def start_plant_care(
     if not plant or plant.owner_id != current_user.id:
         raise HTTPException(status_code=404, detail="Plant not found or not owned by user")
 
-    botanist = db.query(models.User).filter(
-        models.User.id == botanist_id,
-        models.User.is_botanist == True
-    ).first()
-    if not botanist:
-        raise HTTPException(status_code=404, detail="Botanist not found")
-
     plant.in_care = True
-    plant.plant_sitting = botanist_id
     db.commit()
     db.refresh(plant)
     return plant
