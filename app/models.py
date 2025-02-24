@@ -16,7 +16,6 @@ class User(Base):
     hashed_password = Column(String)
     is_active = Column(Boolean, default=True)
     is_botanist = Column(Boolean, default=False)
-    # Only define the owned plants relationship here
     owned_plants = relationship("Plant",
                                 back_populates="owner",
                                 foreign_keys="[Plant.owner_id]")
