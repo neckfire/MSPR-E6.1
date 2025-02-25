@@ -453,4 +453,8 @@ async def list_care_requests(
     ).filter(
         models.Plant.owner_id != current_user.id
     ).all()
+    for plant in care_requests:
+        photofile = plant.photo_url
+        if plant.photo_url:
+            plant.photo_url = base_url + "/" +  photofile
     return care_requests
