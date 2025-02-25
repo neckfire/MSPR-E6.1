@@ -38,7 +38,7 @@ const CardFeed = ({ plant }: PlantProps) => {
 
 
         if (url && !url.startsWith('/')) {
-            return `http://localhost:8000/${url}`;
+            return `http://${url}`;
         }
 
         return url || "/placeholder-plant.jpg";
@@ -77,7 +77,6 @@ const CardFeed = ({ plant }: PlantProps) => {
                     width="100%"
                     fallbackSrc="/placeholder-plant.jpg"
                     onError={(e) => {
-                        // Backup en cas d'erreur de chargement
                         const target = e.target as HTMLImageElement;
                         target.src = "/placeholder-plant.jpg";
                     }}
