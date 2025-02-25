@@ -35,7 +35,7 @@ app.add_middleware(
 async def preflight_handler():
     response = fastapi.responses.Response(status_code=204)
     response.headers["Access-Control-Allow-Origin"] = "http://localhost:5000"
-    response.headers["Access-Control-Allow-Methods"] = "GET, POST, PUT, DELETE, OPTIONS"
+    response.headers["Access-Control-Allow-Methods"] = "GET, POST, PUT, DELETE, OPTIONS, PATCH"
     response.headers["Access-Control-Allow-Headers"] = "*"
     response.headers["Access-Control-Allow-Credentials"] = "true"
     return response
