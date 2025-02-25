@@ -15,7 +15,7 @@ from app.config import settings
 base_url = "localhost:8000"
 models.Base.metadata.create_all(bind=engine)
 
-app = FastAPI(title="A_rosa_je API", )
+app = FastAPI(title="A_rosa_je API")
 # Create the photos directory if it doesn't exist
 os.makedirs("photos", exist_ok=True)
 
@@ -41,7 +41,9 @@ async def preflight_handler():
     return response
 
 
-@app.post("/token")
+# ======= AUTHENTICATION =======
+
+@app.post("/token", tags=["Authentication"])
 async def login(db: Session = Depends(get_db), form_data: OAuth2PasswordRequestForm = Depends()):
     """
         Authenticate a user and return a JWT token.
@@ -72,7 +74,9 @@ async def login(db: Session = Depends(get_db), form_data: OAuth2PasswordRequestF
     return {"access_token": access_token, "token_type": "bearer"}
 
 
-@app.post("/users/", response_model=schemas.User)
+# ======= USER MANAGEMENT =======
+
+@app.post("/users/", response_model=schemas.User, tags=["Users"])
 async def create_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
     """
         Create a new user account.
@@ -104,9 +108,7 @@ async def create_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
     db.refresh(db_user)
     return db_user
 
-from pydantic import EmailStr
-
-@app.put("/users/{user_id}")
+@app.put("/users/{user_id}", tags=["Users"])
 async def edit_user(
     user_id: int,  
     email: EmailStr = None,
@@ -164,7 +166,7 @@ async def edit_user(
     db.refresh(db_user)
     return db_user
 
-@app.get("/users/me/")
+@app.get("/users/me/", tags=["Users"])
 async def read_users_me(current_user: models.User = Depends(auth.get_current_user)):
     """
     Get details of the currently authenticated user.
@@ -177,7 +179,7 @@ async def read_users_me(current_user: models.User = Depends(auth.get_current_use
     """
     return current_user
 
-@app.delete("/users/")
+@app.delete("/users/", tags=["Users"])
 async def delete_user(id: int, db: Session = Depends(get_db), current_user: models.User = Depends(auth.get_current_user)):
     """
         Delete a user account.
@@ -202,7 +204,9 @@ async def delete_user(id: int, db: Session = Depends(get_db), current_user: mode
     return db_user
 
 
-@app.post("/plants/")
+# ======= PLANT MANAGEMENT =======
+
+@app.post("/plants/", tags=["Plants"])
 async def create_plant(
         name: str,
         location: str,
@@ -248,7 +252,7 @@ async def create_plant(
     db.refresh(db_plant)
     return db_plant
 
-@app.put("/plants/{plant_id}")
+@app.put("/plants/{plant_id}", tags=["Plants"])
 async def update_plant(
         plant_id: int,
         name: str = None,
@@ -323,7 +327,7 @@ async def update_plant(
     
     return plant
 
-@app.delete("/plants")
+@app.delete("/plants", tags=["Plants"])
 async def delete_plant(
         plant_id: int,
         db: Session = Depends(get_db)
@@ -351,7 +355,7 @@ async def delete_plant(
             detail="The plant was not found"
         )
 
-@app.get("/my_plants/")
+@app.get("/my_plants/", tags=["Plants"])
 async def list_plants_users_plant(
         current_user: models.User = Depends(auth.get_current_user),
         db: Session = Depends(get_db)
@@ -372,7 +376,7 @@ async def list_plants_users_plant(
             plant.photo_url = base_url + "/" +  photofile
     return plants
 
-@app.get("/all_plants/")
+@app.get("/all_plants/", tags=["Plants"])
 async def list_all_plants_except_users(
         current_user: models.User = Depends(auth.get_current_user),
         db: Session = Depends(get_db)
@@ -393,7 +397,10 @@ async def list_all_plants_except_users(
             plant.photo_url = base_url + "/" +  photofile
     return plants
 
-@app.put("/plants/{plant_id}/start-care")
+
+# ======= PLANT CARE =======
+
+@app.put("/plants/{plant_id}/start-care", tags=["Plant Care"])
 async def start_plant_care(
         plant_id: int,
         current_user: models.User = Depends(auth.get_current_user),
@@ -426,7 +433,7 @@ async def start_plant_care(
     return plant
 
 
-@app.put("/plants/{plant_id}/end-care")
+@app.put("/plants/{plant_id}/end-care", tags=["Plant Care"])
 async def end_plant_care(
         plant_id: int,
         current_user: models.User = Depends(auth.get_current_user),
@@ -443,7 +450,7 @@ async def end_plant_care(
     return plant
 
 
-@app.get("/care-requests/")
+@app.get("/care-requests/", tags=["Plant Care"])
 async def list_care_requests(
         current_user: models.User = Depends(auth.get_current_user),
         db: Session = Depends(get_db)
