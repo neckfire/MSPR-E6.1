@@ -445,5 +445,7 @@ async def list_care_requests(
 ):
     care_requests = db.query(models.Plant).filter(
         models.Plant.in_care == True
+    ).filter(
+        models.Plant.owner_id != current_user.id
     ).all()
     return care_requests
