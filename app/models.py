@@ -10,11 +10,12 @@ class User(Base):
     __tablename__ = "users"
 
     id = Column(Integer, primary_key=True, index=True)
+    username = Column(String)
+    phone = Column(String)
     email = Column(String, unique=True, index=True)
     hashed_password = Column(String)
     is_active = Column(Boolean, default=True)
     is_botanist = Column(Boolean, default=False)
-    # Only define the owned plants relationship here
     owned_plants = relationship("Plant",
                                 back_populates="owner",
                                 foreign_keys="[Plant.owner_id]")
@@ -36,7 +37,8 @@ class Plant(Base):
     # Define both relationships here
     owner = relationship("User",
                          foreign_keys=[owner_id],
-                         back_populates="owned_plants")
+                         back_populates="owned_plants",
+                         lazy="joined")
     sitter = relationship("User",
                           foreign_keys=[plant_sitting],
                           primaryjoin="Plant.plant_sitting == User.id")

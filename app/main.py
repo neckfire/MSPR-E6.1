@@ -4,6 +4,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi import FastAPI, Depends, HTTPException, status, UploadFile, File
 from fastapi.security import OAuth2PasswordRequestForm
 from fastapi.staticfiles import StaticFiles
+from pydantic import EmailStr
 from sqlalchemy.orm import Session
 from datetime import timedelta
 from typing import List
@@ -87,13 +88,78 @@ async def create_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
     if db_user:
         raise HTTPException(status_code=400, detail="Email already registered")
     hashed_password = auth.get_password_hash(user.password)
-    db_user = models.User(email=user.email, hashed_password=hashed_password, is_botanist=user.is_botanist)
+    db_user = models.User(
+        username=user.username,
+        email=user.email, 
+        phone=user.phone,
+        hashed_password=hashed_password, 
+        is_botanist=user.is_botanist)
     db.add(db_user)
     db.commit()
     db.refresh(db_user)
     return db_user
 
-@app.get("/users/me/", response_model=schemas.User)
+from pydantic import EmailStr
+
+@app.put("/users/{user_id}")
+async def edit_user(
+    user_id: int,  
+    email: EmailStr = None,
+    username: str = None,
+    phone: str = None,
+    is_botanist: bool = None, 
+    current_user: models.User = Depends(auth.get_current_user),
+    db: Session = Depends(get_db)
+):
+    """
+    Update an existing user account.
+
+    Parameters:
+    - user_id: ID of the user to update
+    - email: User's new email address (optional)
+    - username: User's new username (optional)
+    - phone: User's new phone number (optional)
+    - is_botanist: Boolean indicating if user is a botanist (optional)
+
+    Returns:
+    - Updated user object
+
+    Raises:
+    - 404: If user is not found
+    - 400: If email is already registered by another user
+    - 403: If trying to update another user without proper permissions
+    """
+    # Check if user is trying to update someone else's profile
+    if user_id != current_user.id:
+        raise HTTPException(status_code=403, detail="Not authorized to update other users")
+        
+    # Get the user to update
+    db_user = db.query(models.User).filter(models.User.id == user_id).first()
+    if not db_user:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    # Check if the new email is already taken by someone else
+    if email and email != db_user.email:
+        existing_user = db.query(models.User).filter(models.User.email == email).first()
+        if existing_user and existing_user.id != user_id:
+            raise HTTPException(status_code=400, detail="Email already registered")
+    
+    # Update user fields
+    if email is not None:
+        db_user.email = email
+    if username is not None:
+        db_user.username = username
+    if phone is not None:
+        db_user.phone = phone
+    if is_botanist is not None:
+        db_user.is_botanist = is_botanist
+    
+    # Commit changes
+    db.commit()
+    db.refresh(db_user)
+    return db_user
+
+@app.get("/users/me/")
 async def read_users_me(current_user: models.User = Depends(auth.get_current_user)):
     """
     Get details of the currently authenticated user.
@@ -106,7 +172,7 @@ async def read_users_me(current_user: models.User = Depends(auth.get_current_use
     """
     return current_user
 
-@app.delete("/users/", response_model=schemas.User)
+@app.delete("/users/")
 async def delete_user(id: int, db: Session = Depends(get_db), current_user: models.User = Depends(auth.get_current_user)):
     """
         Delete a user account.
@@ -131,7 +197,7 @@ async def delete_user(id: int, db: Session = Depends(get_db), current_user: mode
     return db_user
 
 
-@app.post("/plants/", response_model=schemas.Plant)
+@app.post("/plants/")
 async def create_plant(
         name: str,
         location: str,
@@ -166,7 +232,7 @@ async def create_plant(
 
     db_plant = models.Plant(**plant_data)
     if photo:
-        photo_path = f"photos/{current_user.id}_{photo.filename}"
+        photo_path = f"{base_url}/photos/{current_user.id}_{photo.filename}"
         with open(photo_path, "wb") as buffer:
             content = await photo.read()
             buffer.write(content)
@@ -177,9 +243,111 @@ async def create_plant(
     db.refresh(db_plant)
     return db_plant
 
+@app.put("/plants/{plant_id}")
+async def update_plant(
+        plant_id: int,
+        name: str = None,
+        location: str = None,
+        care_instructions: str | None = None,
+        photo: UploadFile = File(None),
+        current_user: models.User = Depends(auth.get_current_user),
+        in_care: bool = None,
+        db: Session = Depends(get_db)
+):
+    """
+    Update an existing plant.
 
-@app.get("/my_plants/", response_model=List[schemas.Plant])
-async def list_plants(
+    Parameters:
+    - plant_id: ID of the plant to update
+    - name: New name of the plant (optional)
+    - location: New location of the plant (optional)
+    - care_instructions: New care instructions (optional)
+    - photo: New photo file of the plant (optional)
+    - in_care: New care status (optional)
+
+    Returns:
+    - Updated plant object
+
+    Raises:
+    - 404: If plant is not found or not owned by user
+
+    Requires:
+    - Valid JWT token in Authorization header
+    """
+    plant = db.query(models.Plant).filter(
+        models.Plant.id == plant_id,
+        models.Plant.owner_id == current_user.id
+    ).first()
+    
+    if plant is None:
+        raise HTTPException(
+            status_code=404,
+            detail="Plant not found or not owned by current user"
+        )
+    
+    if name is not None:
+        plant.name = name
+    
+    if location is not None:
+        plant.location = location
+    
+    if care_instructions is not None:
+        plant.care_instructions = care_instructions
+    
+    if in_care is not None:
+        plant.in_care = in_care
+    
+    if photo and photo.filename:
+        if plant.photo_url and os.path.exists(plant.photo_url.replace(f"{base_url}/", "")):
+            try:
+                os.remove(plant.photo_url.replace(f"{base_url}/", ""))
+            except Exception as e:
+                print(f"Error removing old photo: {e}")
+        
+        photo_filename = f"{current_user.id}_{photo.filename}"
+        photo_path = f"photos/{photo_filename}"
+        
+        with open(photo_path, "wb") as buffer:
+            content = await photo.read()
+            buffer.write(content)
+        
+        plant.photo_url = f"{base_url}/photos/{photo_filename}"
+    
+    db.commit()
+    db.refresh(plant)
+    
+    return plant
+
+@app.delete("/plants")
+async def delete_plant(
+        plant_id: int,
+        db: Session = Depends(get_db)
+):
+    """
+       Delete a plant.
+
+       Parameters:
+       - id: int: the id of the plant to delete
+
+       Returns:
+       - Modified plant object
+
+       Requires:
+       - Valid JWT token in Authorization header
+   """
+    plant = db.query(models.Plant).filter(models.Plant.id == plant_id).first()
+    try:
+        db.delete(plant)
+        db.commit()
+        return plant
+    except Exception as e:
+        return fastapi.HTTPException(
+            status_code=404,
+            detail="The plant was not found"
+        )
+
+@app.get("/my_plants/")
+async def list_plants_users_plant(
         current_user: models.User = Depends(auth.get_current_user),
         db: Session = Depends(get_db)
 ):
@@ -199,8 +367,8 @@ async def list_plants(
             plant.photo_url = base_url + "/" +  photofile
     return plants
 
-@app.get("/all_plants/", response_model=List[schemas.Plant])
-async def list_plants(
+@app.get("/all_plants/")
+async def list_all_plants_except_users(
         current_user: models.User = Depends(auth.get_current_user),
         db: Session = Depends(get_db)
 ):
@@ -220,7 +388,7 @@ async def list_plants(
             plant.photo_url = base_url + "/" +  photofile
     return plants
 
-@app.put("/plants/{plant_id}/start-care", response_model=schemas.Plant)
+@app.put("/plants/{plant_id}/start-care")
 async def start_plant_care(
         plant_id: int,
         current_user: models.User = Depends(auth.get_current_user),
@@ -253,7 +421,7 @@ async def start_plant_care(
     return plant
 
 
-@app.put("/plants/{plant_id}/end-care", response_model=schemas.Plant)
+@app.put("/plants/{plant_id}/end-care")
 async def end_plant_care(
         plant_id: int,
         current_user: models.User = Depends(auth.get_current_user),
@@ -270,7 +438,7 @@ async def end_plant_care(
     return plant
 
 
-@app.get("/care-requests/", response_model=List[schemas.Plant])
+@app.get("/care-requests/")
 async def list_care_requests(
         current_user: models.User = Depends(auth.get_current_user),
         db: Session = Depends(get_db)
