@@ -17,8 +17,11 @@ export default function LoginPage() {
         password: "",
     });
     const [formRegisterData, setFormRegisterData] = useState({
+        username: "",
         email: "",
+        phone: "",
         password: "",
+        password2: "",
         is_botanist: false
     });
 
@@ -28,7 +31,18 @@ export default function LoginPage() {
 
     const handleToggleMode = () => {
         setIsLoginMode(prev => !prev);
-        setFormData({ email: "", password: "" });
+        if (prev) {
+            setFormData({ email: "", password: "" });
+        } else {
+            setFormRegisterData({
+                username: "",
+                email: "",
+                phone: "",
+                password: "",
+                password2: "",
+                is_botanist: false
+            });
+        }
     };
 
     const handleInputChange = (e) => {
@@ -53,7 +67,6 @@ export default function LoginPage() {
 
             if (data.access_token) {
                 localStorage.setItem('token', data.access_token);
-
 
                 setCurrentUser({
                     email: formData.email,
@@ -86,8 +99,44 @@ export default function LoginPage() {
     const handleRegister = async (e) => {
         e.preventDefault();
         setIsLoading(true);
+
+        // Vérifier les champs obligatoires
+        if (!formRegisterData.username || !formRegisterData.email || !formRegisterData.phone || !formRegisterData.password) {
+            toast({
+                title: "Erreur",
+                description: "Tous les champs sont obligatoires",
+                status: "error",
+                duration: 5000,
+                isClosable: true,
+            });
+            setIsLoading(false);
+            return;
+        }
+
+        // Vérifier que les mots de passe correspondent
+        if (formRegisterData.password !== formRegisterData.password2) {
+            toast({
+                title: "Erreur",
+                description: "Les mots de passe ne correspondent pas",
+                status: "error",
+                duration: 5000,
+                isClosable: true,
+            });
+            setIsLoading(false);
+            return;
+        }
+
         try {
-            await registerUser(formRegisterData);
+            // Créer l'objet à envoyer à l'API
+            const userData = {
+                username: formRegisterData.username,
+                email: formRegisterData.email,
+                phone: formRegisterData.phone,
+                password: formRegisterData.password,
+                is_botanist: formRegisterData.is_botanist || false
+            };
+
+            await registerUser(userData);
             toast({
                 title: "Compte créé avec succès",
                 description: "Vous pouvez maintenant vous connecter",
@@ -98,8 +147,8 @@ export default function LoginPage() {
             setIsLoginMode(true);
         } catch (error) {
             toast({
-                title: "Erreur",
-                description: error.message,
+                title: "Erreur d'inscription",
+                description: error.message || "Une erreur est survenue lors de l'inscription",
                 status: "error",
                 duration: 5000,
                 isClosable: true,
@@ -122,7 +171,7 @@ export default function LoginPage() {
         >
             <Box
                 width="800px"
-                height="500px"
+                height={isLoginMode ? "400" : "800"}
                 bg="rgba(255, 255, 255, 0.1)"
                 backdropFilter="blur(10px)"
                 borderRadius="lg"

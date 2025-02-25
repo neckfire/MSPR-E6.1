@@ -19,26 +19,54 @@ export const loginUser = async (credentials) => {
 };
 
 
+
 export const registerUser = async (userData) => {
-    const response = await fetch('http://localhost:8000/users/', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json'
-        },
-        body: JSON.stringify({
-            email: userData.email,
-            password: userData.password,
-            is_botanist: userData.is_botanist || false
-        }),
-        credentials: 'include',
-        mode: 'cors'
-    });
+    try {
+        // Afficher les données envoyées pour le débogage
+        console.log("Données envoyées à l'API:", userData);
 
-    if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.detail || "Erreur lors de la création du compte");
+        const response = await fetch(`http://localhost:8000/users/`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Access-Control-Allow-Origin': '*'
+
+    },
+            body: JSON.stringify(userData)
+        });
+
+        // Récupérer la réponse brute pour le débogage
+        const responseText = await response.text();
+        console.log("Réponse brute de l'API:", responseText);
+
+        if (!response.ok) {
+            // Tentative de parse JSON si possible
+            try {
+                const errorData = JSON.parse(responseText);
+                console.log("Données d'erreur:", errorData);
+
+                if (errorData.detail) {
+                    if (Array.isArray(errorData.detail)) {
+                        throw new Error(errorData.detail[0].msg || 'Erreur lors de l\'inscription');
+                    }
+                    throw new Error(errorData.detail);
+                }
+            } catch (e) {
+                // Si le parse JSON échoue
+                console.log("Impossible de parser l'erreur JSON");
+            }
+            throw new Error(`Erreur ${response.status}: Erreur lors de l'inscription`);
+        }
+
+        // Conversion en JSON seulement si la réponse est OK
+        try {
+            return JSON.parse(responseText);
+        } catch (e) {
+            console.error("Erreur lors du parsing de la réponse:", e);
+            throw new Error("Format de réponse invalide");
+        }
+    } catch (error) {
+        console.error('Erreur d\'inscription complète:', error);
+        throw error;
     }
-
-    return response.json();
 };
