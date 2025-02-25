@@ -11,7 +11,6 @@ export const RegisterForm = ({
                                  onTogglePassword,
                                  onToggleMode
                              }) => {
-    // Fonction pour gérer le changement de la case à cocher
     const handleCheckboxChange = (e) => {
         onChange({
             target: {

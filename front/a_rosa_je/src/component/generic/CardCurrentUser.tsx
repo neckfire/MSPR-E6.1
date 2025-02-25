@@ -9,7 +9,7 @@ import {
     MenuButton,
     MenuList,
     MenuItem,
-    Image, Heading, Badge,
+    Image, Heading, Badge, useToast,
 } from "@chakra-ui/react";
 
 interface Plant {
@@ -28,8 +28,8 @@ interface CardCurrentUserProps {
     plant: Plant;
 }
 
-const CardCurrentUser = ({ plant }: CardCurrentUserProps) => {
-
+const CardCurrentUser = ({ plant}: CardCurrentUserProps) => {
+    const toast = useToast();
     const getImageUrl = (url: string) => {
 
         if (url && (url.startsWith('http://') || url.startsWith('https://'))) {
@@ -42,6 +42,58 @@ const CardCurrentUser = ({ plant }: CardCurrentUserProps) => {
         }
 
         return url || "/placeholder-plant.jpg";
+    };
+
+    const handleDelete = async () => {
+        if (window.confirm(`Êtes-vous sûr de vouloir supprimer ${plant.name} ?`)) {
+            try {
+                const token = localStorage.getItem("token");
+
+                if (!token) {
+                    toast({
+                        title: "Erreur",
+                        description: "Vous devez être connecté pour effectuer cette action",
+                        status: "error",
+                        duration: 5000,
+                        isClosable: true,
+                    });
+                    return;
+                }
+
+                const response = await fetch(`http://localhost:8000/plants?plant_id=${plant.id}`, {
+                    method: "DELETE",
+                    headers: {
+                        "Authorization": `Bearer ${token}`,
+                        "Content-Type": "application/json"
+                    },
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.detail || "Erreur lors de la suppression");
+                }
+
+                toast({
+                    title: "Succès",
+                    description: `La plante "${plant.name}" a été supprimée avec succès`,
+                    status: "success",
+                    duration: 5000,
+                    isClosable: true,
+                });
+            } catch (error) {
+                const errorMessage = error instanceof Error ? error.message : "Une erreur inconnue est survenue";
+
+                toast({
+                    title: "Erreur de suppression",
+                    description: errorMessage,
+                    status: "error",
+                    duration: 5000,
+                    isClosable: true,
+                });
+
+                console.error("Erreur lors de la suppression:", error);
+            }
+        }
     };
 
 
@@ -106,7 +158,8 @@ const CardCurrentUser = ({ plant }: CardCurrentUserProps) => {
                             Edit
                         </MenuItem>
                         <MenuItem icon={<i
-                            className="fa-solid fa-trash"/>} >
+                            className="fa-solid fa-trash"/>}
+                                  onClick={handleDelete}>
                             Delete
                         </MenuItem>
                     </MenuList>

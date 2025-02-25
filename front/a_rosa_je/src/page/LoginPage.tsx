@@ -100,7 +100,7 @@ export default function LoginPage() {
         e.preventDefault();
         setIsLoading(true);
 
-        // Vérifier les champs obligatoires
+
         if (!formRegisterData.username || !formRegisterData.email || !formRegisterData.phone || !formRegisterData.password) {
             toast({
                 title: "Erreur",
@@ -113,7 +113,7 @@ export default function LoginPage() {
             return;
         }
 
-        // Vérifier que les mots de passe correspondent
+
         if (formRegisterData.password !== formRegisterData.password2) {
             toast({
                 title: "Erreur",
@@ -127,7 +127,7 @@ export default function LoginPage() {
         }
 
         try {
-            // Créer l'objet à envoyer à l'API
+
             const userData = {
                 username: formRegisterData.username,
                 email: formRegisterData.email,

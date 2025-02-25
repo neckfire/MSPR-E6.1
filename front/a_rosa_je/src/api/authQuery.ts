@@ -22,8 +22,6 @@ export const loginUser = async (credentials) => {
 
 export const registerUser = async (userData) => {
     try {
-        // Afficher les données envoyées pour le débogage
-        console.log("Données envoyées à l'API:", userData);
 
         const response = await fetch(`http://localhost:8000/users/`, {
             method: 'POST',
@@ -35,16 +33,12 @@ export const registerUser = async (userData) => {
             body: JSON.stringify(userData)
         });
 
-        // Récupérer la réponse brute pour le débogage
         const responseText = await response.text();
-        console.log("Réponse brute de l'API:", responseText);
 
         if (!response.ok) {
-            // Tentative de parse JSON si possible
+
             try {
                 const errorData = JSON.parse(responseText);
-                console.log("Données d'erreur:", errorData);
-
                 if (errorData.detail) {
                     if (Array.isArray(errorData.detail)) {
                         throw new Error(errorData.detail[0].msg || 'Erreur lors de l\'inscription');
@@ -52,13 +46,12 @@ export const registerUser = async (userData) => {
                     throw new Error(errorData.detail);
                 }
             } catch (e) {
-                // Si le parse JSON échoue
+
                 console.log("Impossible de parser l'erreur JSON");
             }
             throw new Error(`Erreur ${response.status}: Erreur lors de l'inscription`);
         }
 
-        // Conversion en JSON seulement si la réponse est OK
         try {
             return JSON.parse(responseText);
         } catch (e) {
