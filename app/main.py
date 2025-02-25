@@ -237,7 +237,7 @@ async def create_plant(
 
     db_plant = models.Plant(**plant_data)
     if photo:
-        photo_path = f"{base_url}/photos/{current_user.id}_{photo.filename}"
+        photo_path = f"photos/{current_user.id}_{photo.filename}"
         with open(photo_path, "wb") as buffer:
             content = await photo.read()
             buffer.write(content)
