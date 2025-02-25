@@ -11,7 +11,8 @@ import {
     VStack,
     Image,
     Flex,
-    useToast
+    useToast,
+    Switch
 } from "@chakra-ui/react";
 import GenericModal from "../generic/genericModal.tsx";
 
@@ -27,6 +28,7 @@ const AddModal = ({ isOpen, onClose }: AddModalProps) => {
         name: '',
         location: '',
         care_instructions: '',
+        in_care: false,
     });
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
     const [previewUrls, setPreviewUrls] = useState<string[]>([]);
@@ -36,6 +38,13 @@ const AddModal = ({ isOpen, onClose }: AddModalProps) => {
         setFormData(prev => ({
             ...prev,
             [name]: value
+        }));
+    };
+
+    const handleSwitchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setFormData(prev => ({
+            ...prev,
+            in_care: e.target.checked
         }));
     };
 
@@ -56,11 +65,11 @@ const AddModal = ({ isOpen, onClose }: AddModalProps) => {
 
     const handleSubmit = async () => {
         try {
-            // Construire l'URL avec les paramètres
             const queryParams = new URLSearchParams({
                 name: formData.name,
                 location: formData.location,
-                care_instructions: formData.care_instructions
+                care_instructions: formData.care_instructions,
+                in_care: formData.in_care.toString(),
             });
 
             const submitData = new FormData();
@@ -68,15 +77,12 @@ const AddModal = ({ isOpen, onClose }: AddModalProps) => {
                 submitData.append('photo', selectedFile);
             }
 
-            // Pour débugger
-            console.log('URL params:', queryParams.toString());
-
             const response = await fetch(`http://localhost:8000/plants/?${queryParams}`, {
                 method: 'POST',
                 headers: {
                     'Authorization': `Bearer ${localStorage.getItem('token')}`,
                 },
-                body: submitData // On envoie uniquement la photo dans le body
+                body: submitData
             });
 
             if (!response.ok) {
@@ -84,9 +90,8 @@ const AddModal = ({ isOpen, onClose }: AddModalProps) => {
                 throw new Error(errorData.detail || 'Failed to submit plant');
             }
 
-            const result = await response.json();
             toast({
-                title: 'Plant added successfully',
+                title: 'Plante ajoutée avec succès',
                 status: 'success',
                 duration: 3000,
                 isClosable: true,
@@ -95,8 +100,8 @@ const AddModal = ({ isOpen, onClose }: AddModalProps) => {
             onClose();
         } catch (error) {
             toast({
-                title: 'Error adding plant',
-                description: error instanceof Error ? error.message : 'Unknown error occurred',
+                title: 'Erreur lors de l\'ajout de la plante',
+                description: error instanceof Error ? error.message : 'Une erreur inconnue est survenue',
                 status: 'error',
                 duration: 3000,
                 isClosable: true,
@@ -143,13 +148,13 @@ const AddModal = ({ isOpen, onClose }: AddModalProps) => {
                             placeholder="Entrez la localisation"
                         />
                         <IconButton
-                            aria-label="Search location"
+                            aria-label="Rechercher la localisation"
                             icon={<i className="fa-solid fa-location-dot"></i>}
                         />
                     </HStack>
                 </FormControl>
 
-                <Flex gap={4}>
+                <Flex gap={4} alignItems="center">
                     <Button
                         leftIcon={<i className="fa-solid fa-plus"></i>}
                         bg="#337418"
@@ -165,6 +170,14 @@ const AddModal = ({ isOpen, onClose }: AddModalProps) => {
                         accept="image/*"
                         style={{ display: 'none' }}
                     />
+                    <Switch
+                        size="lg"
+                        colorScheme="green"
+                        isChecked={formData.in_care}
+                        onChange={handleSwitchChange}
+                    >
+                        Faire garder
+                    </Switch>
                 </Flex>
 
                 <HStack spacing={4} overflowX="auto" pt={2} sx={{
@@ -192,7 +205,7 @@ const AddModal = ({ isOpen, onClose }: AddModalProps) => {
                             overflow="hidden"
                             minW="120px"
                         >
-                            <Image src={url} alt={`Plant ${index + 1}`} />
+                            <Image src={url} alt={`Plante ${index + 1}`} />
                         </Box>
                     ))}
                 </HStack>

@@ -128,8 +128,8 @@ function PlantsittingPage() {
                         }}
                         gap="10"
                         flex="1"
-                        maxW="1000px"
-                        mx="auto"
+                        maxW={1000}
+                        ml={375}
                     >
                         {plants.length > 0 ? (
                             plants.map((plant) => (
