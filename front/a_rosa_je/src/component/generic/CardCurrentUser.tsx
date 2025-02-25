@@ -346,6 +346,7 @@ const CardCurrentUser = ({ plant, onUpdate }: CardCurrentUserProps) => {
                                 </FormLabel>
                                 <Switch
                                     id="in-care"
+                                    colorScheme={'green'}
                                     isChecked={formData.in_care}
                                     onChange={handleSwitchChange}
                                 />
@@ -371,7 +372,7 @@ const CardCurrentUser = ({ plant, onUpdate }: CardCurrentUserProps) => {
 
                             <Flex justify="flex-end" gap={3} mt={6}>
                                 <Button variant="ghost" onClick={onClose}>Annuler</Button>
-                                <Button colorScheme="blue" type="submit">Enregistrer</Button>
+                                <Button colorScheme="green" type="submit">Enregistrer</Button>
                             </Flex>
                         </form>
                     </ModalBody>
