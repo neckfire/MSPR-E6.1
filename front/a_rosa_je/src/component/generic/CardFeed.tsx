@@ -8,9 +8,8 @@ import {
     useDisclosure,
     Image,
     Heading,
-    Badge
+    Badge,
 } from "@chakra-ui/react";
-import { FaHeart, FaComment } from "react-icons/fa";
 import DrawerComment from "../specific/Comment/DrawerComment.tsx";
 
 interface PlantProps {
@@ -30,12 +29,34 @@ interface PlantProps {
 const CardFeed = ({ plant }: PlantProps) => {
     const { isOpen, onOpen, onClose } = useDisclosure();
 
+
+    const getImageUrl = (url: string) => {
+
+        if (url && (url.startsWith('http://') || url.startsWith('https://'))) {
+            return url;
+        }
+
+
+        if (url && !url.startsWith('/')) {
+            return `http://localhost:8000/${url}`;
+        }
+
+        return url || "/placeholder-plant.jpg";
+    };
+
     return (
         <>
-            <Card maxW="100%" position="relative" overflow="hidden" boxShadow="md" height="100%">
+            <Card
+                borderRadius="lg"
+                overflow="hidden"
+                boxShadow="md"
+                width={80}
+                height={350}
+                position="relative"
+            >
                 {/* Heart Icon */}
                 <IconButton
-                    icon={<FaHeart />}
+                    icon={<i className="fa-solid fa-heart" style={{ fontSize: "1.25rem", color: "black" }}></i>}
                     variant="ghost"
                     position="absolute"
                     top="2"
@@ -46,51 +67,62 @@ const CardFeed = ({ plant }: PlantProps) => {
                     size="sm"
                     zIndex="1"
                 />
-
                 {/* Main Card Body - Image Area */}
-                <Image
-                    src={plant.photo_url || "/placeholder-plant.jpg"}
+                <CardBody p={3}>
+                    <Image
+                    src={getImageUrl(plant.photo_url)}
                     alt={plant.name}
                     objectFit="cover"
                     height="200px"
                     width="100%"
+                    fallbackSrc="/placeholder-plant.jpg"
+                    onError={(e) => {
+                        // Backup en cas d'erreur de chargement
+                        const target = e.target as HTMLImageElement;
+                        target.src = "/placeholder-plant.jpg";
+                    }}
                 />
-
-                <CardBody p={3}>
                     <Heading size="md" mb={1}>{plant.name}</Heading>
 
                     {plant.in_care && (
-                        <Badge colorScheme="green" mb={2}>En gardiennage</Badge>
+                        <Badge colorScheme="blue" mb={2}>En attente</Badge>
                     )}
 
                     <Text fontSize="sm" color="gray.600" mb={2}>
                         <b>Lieu:</b> {plant.location}
                     </Text>
-
-                    <Text fontSize="sm" color="gray.600" mb={3} noOfLines={2}>
-                        {plant.care_instructions}
-                    </Text>
-
                     {/* User Info Bar */}
                     <Flex justifyContent="space-between" alignItems="center" mt="auto">
                         <Flex alignItems="center">
                             <Avatar size="xs" mr={2} />
                             <Text fontSize="sm">Propriétaire #{plant.owner_id}</Text>
                         </Flex>
-                        <IconButton
-                            icon={<FaComment />}
-                            variant="ghost"
-                            onClick={onOpen}
-                            colorScheme="green"
-                            size="sm"
-                            aria-label="Commentaires"
-                        />
                     </Flex>
                 </CardBody>
+                <Flex
+                    bg={'#337418'}
+                    p="2"
+                    align="center"
+                    justify="space-between"
+                    position="absolute"
+                    bottom="0"
+                    width="100%"
+                >
+                    <Flex align="center" gap="2">
+                        <Avatar src="" />
+                        <Text color="white" fontSize="sm">Owner</Text>
+                    </Flex>
+                    <IconButton
+                        icon={<i className="fa-regular fa-comment-dots" style={{ fontSize: "1.25rem", color: "white" }}></i>}
+                        variant="ghost"
+                        onClick={onOpen}
+                        colorScheme="green"
+                        color={'white'}
+                        aria-label="Commentaires"
+                    />
+                </Flex>
             </Card>
-
-            {/* Drawer pour les commentaires */}
-            <DrawerComment isOpen={isOpen} onClose={onClose} />
+            <DrawerComment isOpen={isOpen} onClose={onClose} plantId={plant.id} />
         </>
     );
 };

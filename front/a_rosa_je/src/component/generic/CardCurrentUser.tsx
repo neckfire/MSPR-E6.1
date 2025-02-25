@@ -9,7 +9,7 @@ import {
     MenuButton,
     MenuList,
     MenuItem,
-    Image,
+    Image, Heading, Badge,
 } from "@chakra-ui/react";
 
 interface Plant {
@@ -29,6 +29,22 @@ interface CardCurrentUserProps {
 }
 
 const CardCurrentUser = ({ plant }: CardCurrentUserProps) => {
+
+    const getImageUrl = (url: string) => {
+
+        if (url && (url.startsWith('http://') || url.startsWith('https://'))) {
+            return url;
+        }
+
+
+        if (url && !url.startsWith('/')) {
+            return `http://localhost:8000/${url}`;
+        }
+
+        return url || "/placeholder-plant.jpg";
+    };
+
+
     return (
         <Card
             position="relative"
@@ -39,31 +55,29 @@ const CardCurrentUser = ({ plant }: CardCurrentUserProps) => {
             width={80}
             height={350}
         >
-            {/* Main Card Body - Image Area */}
-            <CardBody p="0">
+            <CardBody p={3}>
                 <Image
-                    src={`http://localhost:8000/${plant.photo_url}`}
+                    src={getImageUrl(plant.photo_url)}
                     alt={plant.name}
                     objectFit="cover"
-                    w="100%"
-                    h="100%"
+                    height="200px"
+                    width="100%"
+                    fallbackSrc="/placeholder-plant.jpg"
+                    onError={(e) => {
+                        const target = e.target as HTMLImageElement;
+                        target.src = "/placeholder-plant.jpg";
+                    }}
                 />
-                <Flex
-                    position="absolute"
-                    bottom="50px"
-                    left="0"
-                    right="0"
-                    p="2"
-                    mb={3}
-                    bg="rgba(0, 0, 0, 0.4)"
-                    color="white"
-                    flexDirection="column"
-                >
-                    <Text fontSize="lg" fontWeight="bold">{plant.name}</Text>
-                </Flex>
-            </CardBody>
+                <Heading size="md" mb={1}>{plant.name}</Heading>
 
-            {/* User Info Bar */}
+                {plant.in_care && (
+                    <Badge colorScheme="blue" mb={2}>En attente</Badge>
+                )}
+
+                <Text fontSize="sm" color="gray.600" mb={2}>
+                    <b>Lieu:</b> {plant.location}
+                </Text>
+            </CardBody>
             <Flex
                 bg={'#337418'}
                 p="2"

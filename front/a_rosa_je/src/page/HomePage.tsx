@@ -29,7 +29,7 @@ const HomePage = () => {
     useEffect(() => {
         const fetchPlants = async () => {
             try {
-                const response = await fetch('http://localhost:8000/plants/', {
+                const response = await fetch('http://localhost:8000/my_plants/', {
                     headers: {
                         'Authorization': `Bearer ${localStorage.getItem('token')}`,
                     },
