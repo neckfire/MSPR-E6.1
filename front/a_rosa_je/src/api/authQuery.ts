@@ -19,26 +19,47 @@ export const loginUser = async (credentials) => {
 };
 
 
+
 export const registerUser = async (userData) => {
-    const response = await fetch('http://localhost:8000/users/', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json'
-        },
-        body: JSON.stringify({
-            email: userData.email,
-            password: userData.password,
-            is_botanist: userData.is_botanist || false
-        }),
-        credentials: 'include',
-        mode: 'cors'
-    });
+    try {
 
-    if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.detail || "Erreur lors de la création du compte");
+        const response = await fetch(`http://localhost:8000/users/`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Access-Control-Allow-Origin': '*'
+
+    },
+            body: JSON.stringify(userData)
+        });
+
+        const responseText = await response.text();
+
+        if (!response.ok) {
+
+            try {
+                const errorData = JSON.parse(responseText);
+                if (errorData.detail) {
+                    if (Array.isArray(errorData.detail)) {
+                        throw new Error(errorData.detail[0].msg || 'Erreur lors de l\'inscription');
+                    }
+                    throw new Error(errorData.detail);
+                }
+            } catch (e) {
+
+                console.log("Impossible de parser l'erreur JSON");
+            }
+            throw new Error(`Erreur ${response.status}: Erreur lors de l'inscription`);
+        }
+
+        try {
+            return JSON.parse(responseText);
+        } catch (e) {
+            console.error("Erreur lors du parsing de la réponse:", e);
+            throw new Error("Format de réponse invalide");
+        }
+    } catch (error) {
+        console.error('Erreur d\'inscription complète:', error);
+        throw error;
     }
-
-    return response.json();
 };

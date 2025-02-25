@@ -33,7 +33,12 @@ app.add_middleware(
 
 @app.options("/{rest_of_path:path}")
 async def preflight_handler():
-    return fastapi.responses.Response(status_code=204)
+    response = fastapi.responses.Response(status_code=204)
+    response.headers["Access-Control-Allow-Origin"] = "http://localhost:5000"
+    response.headers["Access-Control-Allow-Methods"] = "GET, POST, PUT, DELETE, OPTIONS"
+    response.headers["Access-Control-Allow-Headers"] = "*"
+    response.headers["Access-Control-Allow-Credentials"] = "true"
+    return response
 
 
 @app.post("/token")
